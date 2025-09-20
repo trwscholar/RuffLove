@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  body {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.6;
+  }
+  
+  .font-rounded {
+    font-family: 'Nunito', sans-serif;
+  }
+}
+
+@layer utilities {
+  .animate-fadeInUp {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+  
+  .animate-slide-right {
+    animation: slideRight 20s linear infinite;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100vw);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e53935;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d32f2f;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+button:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid #e53935;
+  outline-offset: 2px;
+}
+
+/* Custom button hover effects */
+@layer components {
+  .btn-primary {
+    @apply bg-red-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 hover:bg-red-400 hover:scale-105 hover:shadow-xl;
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-red-500 text-red-500 font-bold py-3 px-6 rounded-full transition-all duration-300 hover:bg-red-500 hover:text-white hover:scale-105;
+  }
+}
+
+/* Image hover effects */
+.pet-card img {
+  transition: transform 0.3s ease;
+}
+
+.pet-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Paw print animation */
+.paw-print {
+  animation: pawBounce 2s infinite alternate;
+}
+
+@keyframes pawBounce {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.1) rotate(5deg); }
+}

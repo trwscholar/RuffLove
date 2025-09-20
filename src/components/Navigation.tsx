@@ -1,0 +1,140 @@
+import React, { useState, useEffect } from 'react';
+import { Heart, Menu, X, MessageCircle } from 'lucide-react';
+
+const Navigation = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState('home');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { id: 'home', label: 'Home', href: '#home' },
+    { id: 'adopt', label: 'Adopt', href: '#adopt' },
+    { id: 'donate', label: 'Donate', href: '#donate' },
+    { id: 'events', label: 'Events', href: '#events' },
+    { id: 'contact', label: 'Contact', href: '#contact' },
+  ];
+
+  const handleLinkClick = (linkId: string) => {
+    setActiveLink(linkId);
+    setIsMobileMenuOpen(false);
+  };
+
+  return (
+    <>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/95 backdrop-blur-sm shadow-lg' 
+          : 'bg-white'
+      }`}>
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center space-x-2">
+              <div className="relative">
+                <Heart className="w-8 h-8 text-red-500 fill-current" />
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xs font-bold">
+                  🐾
+                </div>
+              </div>
+              <span className="text-xl font-bold text-gray-800 font-rounded">
+                Ruff Love Malaysia
+              </span>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              {navLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  onClick={() => handleLinkClick(link.id)}
+                  className={`relative text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
+                    activeLink === link.id ? 'text-red-500' : ''
+                  }`}
+                >
+                  {link.label}
+                  {activeLink === link.id && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full"></div>
+                  )}
+                </a>
+              ))}
+            </div>
+
+            {/* Desktop CTA Buttons */}
+            <div className="hidden md:flex items-center space-x-3">
+              <button className="group bg-red-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-red-400 hover:scale-105 active:scale-95 transition-all duration-200 hover:shadow-pink-200 hover:shadow-lg">
+                <span className="relative z-10">Adopt Now</span>
+              </button>
+              
+              <button className="group bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-400 hover:scale-105 active:scale-95 transition-all duration-200 relative">
+                <MessageCircle className="w-5 h-5 group-hover:animate-pulse" />
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="text-xs text-white">💬</span>
+                </div>
+              </button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden flex items-center space-x-2">
+              <button className="bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm shadow-md hover:bg-red-400 transition-colors duration-200">
+                Adopt Now
+              </button>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-gray-700 hover:text-red-500 transition-colors duration-200"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <div className={`md:hidden transition-all duration-300 ${
+          isMobileMenuOpen 
+            ? 'max-h-96 opacity-100' 
+            : 'max-h-0 opacity-0 overflow-hidden'
+        }`}>
+          <div className="bg-white border-t border-gray-100 px-4 py-4 space-y-3">
+            {navLinks.map((link) => (
+              <a
+                key={link.id}
+                href={link.href}
+                onClick={() => handleLinkClick(link.id)}
+                className={`block py-2 text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
+                  activeLink === link.id ? 'text-red-500 border-l-2 border-red-500 pl-2' : ''
+                }`}
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className="pt-3 border-t border-gray-100">
+              <button className="w-full bg-red-500 text-white py-3 rounded-full font-bold shadow-md hover:bg-red-400 transition-colors duration-200 flex items-center justify-center space-x-2">
+                <MessageCircle className="w-5 h-5" />
+                <span>Chat on WhatsApp</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Spacer to prevent content from hiding behind fixed nav */}
+      <div className="h-16"></div>
+    </>
+  );
+};
+
+export default Navigation;
