@@ -1,7 +1,30 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Heart, Clipboard, Home, HandHeart } from 'lucide-react';
 
 const AdoptionProcess = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+          // Complete animation after line draw duration
+          setTimeout(() => setAnimationComplete(true), 1200);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isVisible]);
+
   const steps = [
     {
       icon: Heart,
@@ -30,7 +53,7 @@ const AdoptionProcess = () => {
   ];
 
   return (
-    <section id="adoption-process" className="py-16 bg-pink-50">
+    <section ref={sectionRef} id="adoption-process" className="py-16 bg-pink-50 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-4 font-rounded">
@@ -48,40 +71,190 @@ const AdoptionProcess = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, index) => (
-            <div
-              key={step.step}
-              className="text-center group animate-fadeInUp"
-              style={{ animationDelay: `${index * 200}ms` }}
-            >
-              <div className="relative mb-6">
-                {/* Step Number */}
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold z-10">
+        {/* Process Steps */}
+        <div className="relative">
+          {/* Desktop Layout */}
+          <div className="hidden lg:grid lg:grid-cols-4 gap-8 relative">
+            {/* Connector Line Background */}
+            <div className="absolute top-[88px] left-[10%] right-[10%] h-0.5 bg-pink-200" 
+                 style={{ backgroundColor: '#FFE5E5' }} 
+                 aria-hidden="true" />
+            
+            {/* Animated Connector Line */}
+            <div 
+              className="absolute top-[88px] left-[10%] h-0.5 bg-red-500 transition-all duration-1200 ease-out"
+              style={{ 
+                backgroundColor: '#E53935',
+                width: isVisible ? '80%' : '0%'
+              }}
+              aria-hidden="true" 
+            />
+
+            {steps.map((step, index) => (
+              <div
+                key={step.step}
+                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg rounded-lg p-4"
+                style={{ 
+                  animationDelay: `${index * 120}ms`,
+                  transform: isVisible ? 'scale(1)' : 'scale(0.9)',
+                  opacity: isVisible ? 1 : 0,
+                  transition: 'all 300ms ease-out'
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Step ${step.step} of 4: ${step.title}`}
+              >
+                {/* Step Number Badge */}
+                <div 
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-300 ease-out mb-4"
+                  style={{ 
+                    backgroundColor: (isVisible && index * 300 <= 1200) ? '#E53935' : '#FFE5E5',
+                    color: (isVisible && index * 300 <= 1200) ? 'white' : '#E53935'
+                  }}
+                >
                   {step.step}
                 </div>
                 
-                {/* Icon Circle */}
-                <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:animate-bounce transition-all duration-300 mx-auto">
-                  <step.icon className="w-10 h-10 text-white" />
+                {/* Main Icon Circle */}
+                <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center shadow-lg mb-4 transition-all duration-200 ease-out group-hover:scale-110"
+                     style={{ backgroundColor: '#E53935' }}>
+                  <step.icon className="w-8 h-8 text-white" />
                 </div>
+                
+                {/* Title */}
+                <h3 
+                  className="text-xl font-bold mb-2 font-rounded text-center transition-colors duration-300 ease-out"
+                  style={{ 
+                    color: (isVisible && index * 300 <= 1200) ? '#1F2937' : '#6B7280'
+                  }}
+                >
+                  {step.title}
+                </h3>
+                
+                {/* Description */}
+                <p className="text-gray-600 text-center leading-relaxed text-sm">
+                  {step.description}
+                </p>
               </div>
-              
-              <h3 className="text-2xl font-bold text-gray-800 mb-4 font-rounded">
-                {step.title}
-              </h3>
-              
-              <p className="text-gray-600 leading-relaxed">
-                {step.description}
-              </p>
-              
-              {/* Connector Line (hidden on last item) */}
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-10 left-full w-full h-0.5 bg-red-200 transform translate-x-4" 
-                     style={{ width: 'calc(100% - 2rem)' }} />
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Tablet Layout */}
+          <div className="hidden md:grid md:grid-cols-2 lg:hidden gap-8 relative">
+            {steps.map((step, index) => (
+              <div
+                key={step.step}
+                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg rounded-lg p-4"
+                style={{ 
+                  animationDelay: `${index * 120}ms`,
+                  transform: isVisible ? 'scale(1)' : 'scale(0.9)',
+                  opacity: isVisible ? 1 : 0,
+                  transition: 'all 300ms ease-out'
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Step ${step.step} of 4: ${step.title}`}
+              >
+                {/* Step Number Badge */}
+                <div 
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-300 ease-out mb-4"
+                  style={{ 
+                    backgroundColor: (isVisible && index * 300 <= 1200) ? '#E53935' : '#FFE5E5',
+                    color: (isVisible && index * 300 <= 1200) ? 'white' : '#E53935'
+                  }}
+                >
+                  {step.step}
+                </div>
+                
+                {/* Main Icon Circle */}
+                <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center shadow-lg mb-4 transition-all duration-200 ease-out group-hover:scale-110"
+                     style={{ backgroundColor: '#E53935' }}>
+                  <step.icon className="w-8 h-8 text-white" />
+                </div>
+                
+                {/* Title */}
+                <h3 
+                  className="text-xl font-bold mb-2 font-rounded text-center transition-colors duration-300 ease-out"
+                  style={{ 
+                    color: (isVisible && index * 300 <= 1200) ? '#1F2937' : '#6B7280'
+                  }}
+                >
+                  {step.title}
+                </h3>
+                
+                {/* Description */}
+                <p className="text-gray-600 text-center leading-relaxed text-sm">
+                  {step.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="md:hidden space-y-8 relative">
+            {/* Vertical Connector Line Background */}
+            <div className="absolute left-1/2 top-[88px] bottom-[88px] w-0.5 bg-pink-200 transform -translate-x-1/2" 
+                 style={{ backgroundColor: '#FFE5E5' }} 
+                 aria-hidden="true" />
+            
+            {/* Animated Vertical Connector Line */}
+            <div 
+              className="absolute left-1/2 top-[88px] w-0.5 bg-red-500 transform -translate-x-1/2 transition-all duration-1200 ease-out"
+              style={{ 
+                backgroundColor: '#E53935',
+                height: isVisible ? 'calc(100% - 176px)' : '0%'
+              }}
+              aria-hidden="true" 
+            />
+
+            {steps.map((step, index) => (
+              <div
+                key={step.step}
+                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg rounded-lg p-4 bg-white/50"
+                style={{ 
+                  animationDelay: `${index * 120}ms`,
+                  transform: isVisible ? 'scale(1)' : 'scale(0.9)',
+                  opacity: isVisible ? 1 : 0,
+                  transition: 'all 300ms ease-out'
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Step ${step.step} of 4: ${step.title}`}
+              >
+                {/* Step Number Badge */}
+                <div 
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-300 ease-out mb-4"
+                  style={{ 
+                    backgroundColor: (isVisible && index * 300 <= 1200) ? '#E53935' : '#FFE5E5',
+                    color: (isVisible && index * 300 <= 1200) ? 'white' : '#E53935'
+                  }}
+                >
+                  {step.step}
+                </div>
+                
+                {/* Main Icon Circle */}
+                <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center shadow-lg mb-4 transition-all duration-200 ease-out group-hover:scale-110"
+                     style={{ backgroundColor: '#E53935' }}>
+                  <step.icon className="w-8 h-8 text-white" />
+                </div>
+                
+                {/* Title */}
+                <h3 
+                  className="text-xl font-bold mb-2 font-rounded text-center transition-colors duration-300 ease-out"
+                  style={{ 
+                    color: (isVisible && index * 300 <= 1200) ? '#1F2937' : '#6B7280'
+                  }}
+                >
+                  {step.title}
+                </h3>
+                
+                {/* Description */}
+                <p className="text-gray-600 text-center leading-relaxed text-sm">
+                  {step.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
         
         <div className="text-center mt-12">

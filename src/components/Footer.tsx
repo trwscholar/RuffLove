@@ -3,17 +3,10 @@ import { Heart, Facebook, Instagram, MessageCircle } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t-4 border-pink-100 py-12 relative">
-      {/* Paw Print Border */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-pink-100 overflow-hidden">
-        <div className="flex space-x-8 animate-slide-right">
-          <span className="text-red-300 text-sm">🐾</span>
-          <span className="text-red-300 text-sm">🐾</span>
-          <span className="text-red-300 text-sm">🐾</span>
-          <span className="text-red-300 text-sm">🐾</span>
-          <span className="text-red-300 text-sm">🐾</span>
-        </div>
-      </div>
+    <footer className="bg-white py-12 relative">
+      {/* Clean separator */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-pink-100" style={{ backgroundColor: '#FBE7EA' }}></div>
+      <div className="h-6"></div>
       
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

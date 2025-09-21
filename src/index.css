@@ -19,10 +19,6 @@
   .animate-fadeInUp {
     animation: fadeInUp 0.8s ease-out forwards;
   }
-  
-  .animate-slide-right {
-    animation: slideRight 20s linear infinite;
-  }
 }
 
 @keyframes fadeInUp {
@@ -45,12 +41,15 @@
   }
 }
 
-@keyframes slideRight {
-  from {
-    transform: translateX(-100%);
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeInUp {
+    animation: none;
   }
-  to {
-    transform: translateX(100vw);
+  
+  * {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
   }
 }
 
