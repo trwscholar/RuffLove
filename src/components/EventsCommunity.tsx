@@ -111,6 +111,16 @@ const EventsCommunity = () => {
             </div>
           ))}
         </div>
+        
+        {/* Paw Print Divider */}
+        <div className="flex justify-center items-center mb-8">
+          <div className="flex space-x-4 text-red-500">
+            <span className="animate-pulse">🐾</span>
+            <span className="animate-pulse" style={{ animationDelay: '0.5s' }}>🐾</span>
+            <span className="animate-pulse" style={{ animationDelay: '1s' }}>🐾</span>
+          </div>
+        </div>
+        
         <div className="text-center">
           <button className="group bg-red-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-red-400 hover:scale-105 transition-all duration-300 hover:shadow-pink-200 hover:shadow-xl relative overflow-hidden">
             <span className="relative z-10">View All Events</span>

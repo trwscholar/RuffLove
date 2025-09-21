@@ -144,6 +144,13 @@ const Testimonials = () => {
             ))}
           </div>
         </div>
+        
+        {/* Paw Print Divider */}
+        <div className="flex justify-center items-center mt-12">
+          <div className="border-t-2 border-red-200 w-24"></div>
+          <div className="mx-4 text-red-500 text-xl">🐾</div>
+          <div className="border-t-2 border-red-200 w-24"></div>
+        </div>
       </div>
     </section>
   );
