@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle } from 'lucide-react';
-import ruffLogo from '../assets/rufflovelogo.png'; // <-- logo file
+import React, { useState, useEffect } from "react";
+import { Menu, X, MessageCircle } from "lucide-react";
+import ruffLogo from "../assets/rufflovelogo.png"; // transparent logo
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState('home');
+  const [activeLink, setActiveLink] = useState("home");
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { id: 'home', label: 'Home', href: '#home' },
-    { id: 'adopt', label: 'Adopt', href: '#adopt' },
-    { id: 'donate', label: 'Donate', href: '#donate' },
-    { id: 'events', label: 'Events', href: '#events' },
-    { id: 'contact', label: 'Contact', href: '#contact' },
+    { id: "home", label: "Home", href: "#home" },
+    { id: "adopt", label: "Adopt", href: "#adopt" },
+    { id: "donate", label: "Donate", href: "#donate" },
+    { id: "events", label: "Events", href: "#events" },
+    { id: "contact", label: "Contact", href: "#contact" },
   ];
 
   const handleLinkClick = (linkId: string) => {
@@ -33,7 +33,7 @@ const Navigation = () => {
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-lg' : 'bg-white'
+          isScrolled ? "bg-white/95 backdrop-blur-sm shadow-lg" : "bg-white"
         }`}
       >
         <div className="max-w-6xl mx-auto px-4">
@@ -43,7 +43,7 @@ const Navigation = () => {
               <img
                 src={ruffLogo}
                 alt="Ruff Love Malaysia"
-                className="h-12 w-auto min-w-[40px] object-contain drop-shadow-md select-none"
+                className="h-12 w-auto object-contain select-none"
                 draggable={false}
               />
               <span className="text-xl font-bold text-gray-800 font-rounded">
@@ -59,7 +59,7 @@ const Navigation = () => {
                   href={link.href}
                   onClick={() => handleLinkClick(link.id)}
                   className={`relative text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
-                    activeLink === link.id ? 'text-red-500' : ''
+                    activeLink === link.id ? "text-red-500" : ""
                   }`}
                 >
                   {link.label}
@@ -106,7 +106,9 @@ const Navigation = () => {
         {/* Mobile Menu */}
         <div
           className={`md:hidden transition-all duration-300 ${
-            isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+            isMobileMenuOpen
+              ? "max-h-96 opacity-100"
+              : "max-h-0 opacity-0 overflow-hidden"
           }`}
         >
           <div className="bg-white border-t border-gray-100 px-4 py-4 space-y-3">
@@ -116,7 +118,9 @@ const Navigation = () => {
                 href={link.href}
                 onClick={() => handleLinkClick(link.id)}
                 className={`block py-2 text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
-                  activeLink === link.id ? 'text-red-500 border-l-2 border-red-500 pl-2' : ''
+                  activeLink === link.id
+                    ? "text-red-500 border-l-2 border-red-500 pl-2"
+                    : ""
                 }`}
               >
                 {link.label}
