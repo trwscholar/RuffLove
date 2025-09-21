@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Menu, X, MessageCircle } from 'lucide-react';
+import { Menu, X, MessageCircle } from 'lucide-react';
+import ruffLogo from '../assets/rufflovelogo.png'; // <-- logo file
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,25 +31,25 @@ const Navigation = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/95 backdrop-blur-sm shadow-lg' 
-          : 'bg-white'
-      }`}>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-lg' : 'bg-white'
+        }`}
+      >
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <div className="relative">
-                <Heart className="w-8 h-8 text-red-500 fill-current" />
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xs font-bold">
-                  🐾
-                </div>
-              </div>
+            <a href="#home" className="flex items-center space-x-2">
+              <img
+                src={ruffLogo}
+                alt="Ruff Love Malaysia"
+                className="h-12 w-auto min-w-[40px] object-contain drop-shadow-md select-none"
+                draggable={false}
+              />
               <span className="text-xl font-bold text-gray-800 font-rounded">
                 Ruff Love Malaysia
               </span>
-            </div>
+            </a>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
@@ -74,7 +75,7 @@ const Navigation = () => {
               <button className="group bg-red-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-red-400 hover:scale-105 active:scale-95 transition-all duration-200 hover:shadow-pink-200 hover:shadow-lg">
                 <span className="relative z-10">Adopt Now</span>
               </button>
-              
+
               <button className="group bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-400 hover:scale-105 active:scale-95 transition-all duration-200 relative">
                 <MessageCircle className="w-5 h-5 group-hover:animate-pulse" />
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
@@ -103,11 +104,11 @@ const Navigation = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden transition-all duration-300 ${
-          isMobileMenuOpen 
-            ? 'max-h-96 opacity-100' 
-            : 'max-h-0 opacity-0 overflow-hidden'
-        }`}>
+        <div
+          className={`md:hidden transition-all duration-300 ${
+            isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+          }`}
+        >
           <div className="bg-white border-t border-gray-100 px-4 py-4 space-y-3">
             {navLinks.map((link) => (
               <a
