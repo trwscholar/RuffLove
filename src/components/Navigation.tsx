@@ -143,7 +143,7 @@ const Navigation = () => {
             {/* Social Icons for Mobile */}
             <div className="pt-3 border-t border-gray-100 flex space-x-4">
               <a
-                href="https://www.instagram.com/rufflove"
+                href="https://www.instagram.com/rufflove.my/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-red-500 transition-colors duration-200"
