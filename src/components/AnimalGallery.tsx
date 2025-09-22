@@ -136,7 +136,7 @@ const AnimalGallery = ({
   };
 
   return (
-    <section className="py-16 bg-white">
+    <section id="adopt" className="py-16 bg-white">
       <div className="max-w-6xl mx-auto px-4">
         <div className="mb-8 flex flex-col justify-between md:mb-14 md:flex-row md:items-end lg:mb-16">
           <div className="max-w-2xl">
