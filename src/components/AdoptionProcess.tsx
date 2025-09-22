@@ -67,7 +67,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
   onStepChange,
   className,
   autoAdvance = true,
-  autoAdvanceInterval = 4000,
+  autoAdvanceInterval = 2000,
 }) => {
   const [activeStep, setActiveStep] = useState(currentStep);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
