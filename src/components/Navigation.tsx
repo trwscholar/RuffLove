@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { FaInstagram, FaFacebook } from "react-icons/fa";
 import ruffLogo from "../assets/rufflovelogo.png"; // transparent logo
 
 const Navigation = () => {
@@ -18,7 +19,7 @@ const Navigation = () => {
 
   const navLinks = [
     { id: "home", label: "Home", href: "#home" },
-    { id: "about", label: "About Us", href: "#about" },   // 👈 added About Us
+    { id: "about", label: "About Us", href: "#about" },
     { id: "adopt", label: "Adopt", href: "#adopt" },
     { id: "donate", label: "Donate", href: "#donate" },
     { id: "events", label: "Events", href: "#events" },
@@ -71,18 +72,29 @@ const Navigation = () => {
               ))}
             </div>
 
-            {/* Desktop CTA Buttons */}
-            <div className="hidden md:flex items-center space-x-3">
+            {/* Desktop CTA + Social Icons */}
+            <div className="hidden md:flex items-center space-x-4">
               <button className="group bg-red-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-red-400 hover:scale-105 active:scale-95 transition-all duration-200 hover:shadow-pink-200 hover:shadow-lg">
                 <span className="relative z-10">Adopt Now</span>
               </button>
 
-              <button className="group bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-400 hover:scale-105 active:scale-95 transition-all duration-200 relative">
-                <MessageCircle className="w-5 h-5 group-hover:animate-pulse" />
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-xs text-white">💬</span>
-                </div>
-              </button>
+              {/* Social Icons */}
+              <a
+                href="https://www.instagram.com/rufflove" // replace with actual IG link
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-red-500 transition-colors duration-200"
+              >
+                <FaInstagram className="w-6 h-6" />
+              </a>
+              <a
+                href="https://www.facebook.com/rufflove" // replace with actual FB link
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-red-500 transition-colors duration-200"
+              >
+                <FaFacebook className="w-6 h-6" />
+              </a>
             </div>
 
             {/* Mobile Menu Button */}
@@ -127,11 +139,25 @@ const Navigation = () => {
                 {link.label}
               </a>
             ))}
-            <div className="pt-3 border-t border-gray-100">
-              <button className="w-full bg-red-500 text-white py-3 rounded-full font-bold shadow-md hover:bg-red-400 transition-colors duration-200 flex items-center justify-center space-x-2">
-                <MessageCircle className="w-5 h-5" />
-                <span>Chat on WhatsApp</span>
-              </button>
+
+            {/* Social Icons for Mobile */}
+            <div className="pt-3 border-t border-gray-100 flex space-x-4">
+              <a
+                href="https://www.instagram.com/rufflove"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-red-500 transition-colors duration-200"
+              >
+                <FaInstagram className="w-6 h-6" />
+              </a>
+              <a
+                href="https://www.facebook.com/rufflove"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-red-500 transition-colors duration-200"
+              >
+                <FaFacebook className="w-6 h-6" />
+              </a>
             </div>
           </div>
         </div>
