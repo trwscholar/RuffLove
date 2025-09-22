@@ -42,7 +42,7 @@ const AboutUs = () => {
               alt="About Ruff Love"
               className="w-full h-[340px] sm:h-[420px] object-cover rounded-2xl shadow-lg"
             />
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-red-50 via-red-50/80 to-transparent rounded-2xl" />
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-red-50 via-red-50/80 to-transparent rounded-2xl" />
           </div>
         </div>
       </div>
@@ -54,8 +54,8 @@ const AboutUs = () => {
           alt="About Ruff Love"
           className="w-full h-full object-cover"
         />
-        {/* Wider fade so text stays clear */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-64 bg-gradient-to-r from-red-50 via-red-50/90 to-transparent" />
+        {/* Softer edge fade (reduced from w-64 to w-32) */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-red-50 via-red-50/80 to-transparent" />
       </div>
     </section>
   );
