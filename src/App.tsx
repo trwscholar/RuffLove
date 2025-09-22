@@ -1,7 +1,8 @@
 import React from 'react';
 import Navigation from './components/Navigation';
-import ServicesStrip from './components/ServicesStrip';
 import Hero from './components/Hero';
+import AboutUs from './components/AboutUs';   // 👈 new import
+import ServicesStrip from './components/ServicesStrip';
 import AvailablePets from './components/AvailablePets';
 import AdoptionProcess from './components/AdoptionProcess';
 import DonationSupport from './components/DonationSupport';
@@ -15,6 +16,7 @@ function App() {
     <div className="min-h-screen bg-white">
       <Navigation />
       <Hero />
+      <AboutUs />       {/* 👈 inserted right after Hero */}
       <ServicesStrip />
       <AvailablePets />
       <AdoptionProcess />
