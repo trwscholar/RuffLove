@@ -93,7 +93,7 @@ const AdoptionProcess = () => {
             {steps.map((step, index) => (
               <div
                 key={step.step}
-                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg rounded-lg p-4"
+                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg bg-white border border-gray-200 rounded-lg shadow p-6"
                 style={{ 
                   animationDelay: `${index * 120}ms`,
                   transform: isVisible ? 'scale(1)' : 'scale(0.9)',
@@ -144,7 +144,7 @@ const AdoptionProcess = () => {
             {steps.map((step, index) => (
               <div
                 key={step.step}
-                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg rounded-lg p-4"
+                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg bg-white border border-gray-200 rounded-lg shadow p-6"
                 style={{ 
                   animationDelay: `${index * 120}ms`,
                   transform: isVisible ? 'scale(1)' : 'scale(0.9)',
@@ -210,7 +210,7 @@ const AdoptionProcess = () => {
             {steps.map((step, index) => (
               <div
                 key={step.step}
-                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg rounded-lg p-4 bg-white/50"
+                className="relative flex flex-col items-center group cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-within:-translate-y-0.5 focus-within:shadow-lg bg-white border border-gray-200 rounded-lg shadow p-6"
                 style={{ 
                   animationDelay: `${index * 120}ms`,
                   transform: isVisible ? 'scale(1)' : 'scale(0.9)',
