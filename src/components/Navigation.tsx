@@ -18,6 +18,7 @@ const Navigation = () => {
 
   const navLinks = [
     { id: "home", label: "Home", href: "#home" },
+    { id: "about", label: "About Us", href: "#about" },   // 👈 added About Us
     { id: "adopt", label: "Adopt", href: "#adopt" },
     { id: "donate", label: "Donate", href: "#donate" },
     { id: "events", label: "Events", href: "#events" },
