@@ -8,6 +8,7 @@ import AdoptionProcess from './components/AdoptionProcess';
 import DonationSupport from './components/DonationSupport';
 import EventsCommunity from './components/EventsCommunity';
 import Testimonials from './components/Testimonials';
+import SocialMedia from "./components/SocialMedia";
 import ContactLocation from './components/ContactLocation';
 import Footer from './components/Footer';
 
@@ -27,6 +28,7 @@ function App() {
       <DonationSupport />
       <EventsCommunity />
       <Testimonials />
+      <SocialMedia />
       <ContactLocation />
       <Footer />
     </div>
