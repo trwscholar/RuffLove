@@ -25,10 +25,83 @@ interface AnimalGalleryProps {
 }
 
 const AnimalGallery = ({
-  heading = "Adopt a Friend",
-  description = "Browse adorable pets looking for homes.",
+  heading = "Find Your Perfect Companion",
+  description = "Browse through our adorable animals looking for their forever homes. Each one has a unique personality and is ready to bring joy to your family.",
   adoptionUrl = "/adopt",
-  animals = [],
+  animals = [
+    {
+      id: "bella",
+      name: "Bella",
+      breed: "Golden Retriever Mix",
+      age: "2 years",
+      gender: "Female",
+      location: "Kuala Lumpur",
+      description: "Bella is a sweet and energetic dog who loves playing fetch and cuddling. She's great with kids and other pets.",
+      image: "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
+      isUrgent: false,
+      isFavorite: false,
+    },
+    {
+      id: "max",
+      name: "Max",
+      breed: "Tabby Cat",
+      age: "1 year",
+      gender: "Male",
+      location: "Petaling Jaya",
+      description: "Max is a playful kitten who loves to chase toys and nap in sunny spots. He's looking for a loving family.",
+      image: "https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
+      isUrgent: true,
+      isFavorite: false,
+    },
+    {
+      id: "luna",
+      name: "Luna",
+      breed: "Border Collie",
+      age: "3 years",
+      gender: "Female",
+      location: "Shah Alam",
+      description: "Luna is an intelligent and loyal companion who loves outdoor adventures and learning new tricks.",
+      image: "https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
+      isUrgent: false,
+      isFavorite: true,
+    },
+    {
+      id: "charlie",
+      name: "Charlie",
+      breed: "Persian Cat",
+      age: "4 years",
+      gender: "Male",
+      location: "Subang Jaya",
+      description: "Charlie is a calm and affectionate cat who enjoys quiet moments and gentle pets. Perfect for a peaceful home.",
+      image: "https://images.pexels.com/photos/1276553/pexels-photo-1276553.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
+      isUrgent: false,
+      isFavorite: false,
+    },
+    {
+      id: "rocky",
+      name: "Rocky",
+      breed: "German Shepherd",
+      age: "5 years",
+      gender: "Male",
+      location: "Ampang",
+      description: "Rocky is a protective and loving dog who would make an excellent family guardian and companion.",
+      image: "https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
+      isUrgent: true,
+      isFavorite: false,
+    },
+    {
+      id: "mittens",
+      name: "Mittens",
+      breed: "Siamese Mix",
+      age: "6 months",
+      gender: "Female",
+      location: "Mont Kiara",
+      description: "Mittens is a curious and social kitten who loves to explore and play with other cats.",
+      image: "https://images.pexels.com/photos/1741205/pexels-photo-1741205.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
+      isUrgent: false,
+      isFavorite: true,
+    },
+  ],
 }: AnimalGalleryProps) => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -36,15 +109,15 @@ const AnimalGallery = ({
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (!carouselApi) return;
-
+    if (!carouselApi) {
+      return;
+    }
     const updateSelection = () => {
       setCanScrollPrev(carouselApi.canScrollPrev());
       setCanScrollNext(carouselApi.canScrollNext());
     };
     updateSelection();
     carouselApi.on("select", updateSelection);
-
     return () => {
       carouselApi.off("select", updateSelection);
     };
@@ -65,37 +138,50 @@ const AnimalGallery = ({
   return (
     <section id="adopt" className="py-16 bg-white">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Centered Header */}
-        <div className="mb-8 text-center md:mb-14 lg:mb-16">
-          <h2 className="mb-3 text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
-            {heading}
-          </h2>
-          <p className="text-gray-600 md:text-lg">
-            {description}
-          </p>
-          <div className="flex justify-center mt-4">
-            <div className="flex space-x-2">
-              <span className="text-red-500">🐾</span>
-              <span className="text-red-500">🐾</span>
-              <span className="text-red-500">🐾</span>
+        <div className="mb-8 flex flex-col justify-between md:mb-14 md:flex-row md:items-end lg:mb-16">
+          <div className="max-w-2xl">
+            <h2 className="mb-3 text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
+              {heading}
+            </h2>
+            <p className="text-gray-600 md:text-lg">
+              {description}
+            </p>
+            <div className="flex justify-start mt-4">
+              <div className="flex space-x-2">
+                <span className="text-red-500">🐾</span>
+                <span className="text-red-500">🐾</span>
+                <span className="text-red-500">🐾</span>
+              </div>
             </div>
+          </div>
+          <div className="mt-8 flex shrink-0 items-center justify-start gap-2 md:mt-0">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => {
+                carouselApi?.scrollPrev();
+              }}
+              disabled={!canScrollPrev}
+              className="disabled:pointer-events-auto ml-8"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => {
+                carouselApi?.scrollNext();
+              }}
+              disabled={!canScrollNext}
+              className="disabled:pointer-events-auto"
+            >
+              <ArrowRight className="w-5 h-5" />
+            </Button>
           </div>
         </div>
       </div>
       
-      <div className="relative w-full">
-        {/* Left Arrow */}
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => carouselApi?.scrollPrev()}
-          disabled={!canScrollPrev}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white shadow-md"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-
-        {/* Carousel */}
+      <div className="w-full">
         <Carousel
           setApi={setCarouselApi}
           opts={{
@@ -195,17 +281,6 @@ const AnimalGallery = ({
             ))}
           </CarouselContent>
         </Carousel>
-
-        {/* Right Arrow */}
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => carouselApi?.scrollNext()}
-          disabled={!canScrollNext}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white shadow-md"
-        >
-          <ArrowRight className="w-5 h-5" />
-        </Button>
       </div>
       
       <div className="text-center mt-12">
