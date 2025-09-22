@@ -4,7 +4,7 @@ import ruffLogo from "../assets/rufflovelogo.png";
 const LogoTest = () => {
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center bg-gray-200">
-      <h1 className="mb-6 text-2xl font-bold">Logo Test</h1>
+      <h1 className="mb-6 text-2xl font-bold">Logo TeAAAst</h1>
       <img
         src={ruffLogo}
         alt="Ruff Love Logo Test"
