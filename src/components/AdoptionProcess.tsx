@@ -23,6 +23,8 @@ interface AnimalAdoptionProcessProps {
   currentStep?: number;
   onStepChange?: (step: number) => void;
   className?: string;
+  autoAdvance?: boolean;
+  autoAdvanceInterval?: number;
 }
 
 const processSteps: ProcessStep[] = [
@@ -64,24 +66,51 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
   currentStep = 1,
   onStepChange,
   className,
+  autoAdvance = true,
+  autoAdvanceInterval = 4000,
 }) => {
   const [activeStep, setActiveStep] = useState(currentStep);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     setActiveStep(currentStep);
   }, [currentStep]);
 
+  // Auto-advance timer
+  useEffect(() => {
+    if (!autoAdvance || isPaused) return;
+
+    const timer = setInterval(() => {
+      setActiveStep(prev => {
+        const nextStep = prev >= processSteps.length ? 1 : prev + 1;
+        onStepChange?.(nextStep);
+        return nextStep;
+      });
+    }, autoAdvanceInterval);
+
+    return () => clearInterval(timer);
+  }, [autoAdvance, autoAdvanceInterval, isPaused, onStepChange]);
   const handleStepClick = (stepId: number) => {
+    setIsPaused(true);
     setActiveStep(stepId);
     onStepChange?.(stepId);
+    
+    // Resume auto-advance after a delay
+    setTimeout(() => {
+      setIsPaused(false);
+    }, autoAdvanceInterval * 1.5);
   };
 
   const isStepCompleted = (stepId: number) => stepId < activeStep;
   const isStepActive = (stepId: number) => stepId === activeStep;
 
   return (
-    <section className="py-16 bg-pink-50">
+    <section 
+      className="py-16 bg-pink-50"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       <div className={cn("w-full max-w-6xl mx-auto px-4", className)}>
         {/* Header */}
         <div className="text-center mb-12">
@@ -118,11 +147,11 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                   initial={{ scaleX: 0 }}
                   animate={{
                     scaleX: 1,
-                    backgroundColor: isStepCompleted(index + 2) 
+                    backgroundColor: activeStep > index + 1
                       ? "#E53935" 
                       : "#E5E7EB"
                   }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
                   style={{ transformOrigin: "left" }}
                 />
               ))}
@@ -167,6 +196,13 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                       transformStyle: "preserve-3d",
                       perspective: 1000
                     }}
+                    animate={{
+                      scale: active ? 1.02 : 1,
+                      boxShadow: active 
+                        ? "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                        : "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+                    }}
+                    transition={{ duration: 0.3 }}
                   >
                     {/* 3D Hover Effect Background */}
                     <motion.div
@@ -331,6 +367,25 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
               );
             })}
           </div>
+        </div>
+
+        {/* Progress Indicator */}
+        <div className="flex justify-center mt-8 space-x-2">
+          {processSteps.map((_, index) => (
+            <motion.div
+              key={index}
+              className={cn(
+                "w-2 h-2 rounded-full cursor-pointer",
+                activeStep === index + 1 ? "bg-red-500" : "bg-gray-300"
+              )}
+              onClick={() => handleStepClick(index + 1)}
+              animate={{
+                scale: activeStep === index + 1 ? 1.2 : 1,
+                backgroundColor: activeStep === index + 1 ? "#E53935" : "#D1D5DB"
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          ))}
         </div>
 
         {/* Call to Action */}
