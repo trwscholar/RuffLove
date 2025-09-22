@@ -162,7 +162,7 @@ const AnimalGallery = ({
                 carouselApi?.scrollPrev();
               }}
               disabled={!canScrollPrev}
-              className="disabled:pointer-events-auto"
+              className="disabled:pointer-events-auto ml-8"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -196,13 +196,13 @@ const AnimalGallery = ({
           <CarouselContent className="ml-4 2xl:ml-[max(4rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))]">
             {animals.map((animal) => (
               <CarouselItem key={animal.id} className="pl-4 md:max-w-[380px] lg:max-w-[420px]">
-                <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
+                <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[520px] flex flex-col">
                   {/* Image Container */}
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
                     <img
                       src={animal.image}
                       alt={`${animal.name} - ${animal.breed}`}
-                      className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110"
+                      className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110 rounded-t-2xl"
                     />
                     
                     {/* Urgent Badge */}
@@ -229,7 +229,7 @@ const AnimalGallery = ({
                   </div>
                   
                   {/* Content */}
-                  <div className="p-6">
+                  <div className="p-6 flex-1 flex flex-col">
                     <div className="mb-3 flex items-center justify-between">
                       <div>
                         <h3 className="text-xl font-bold text-gray-800 mb-1">
@@ -255,11 +255,11 @@ const AnimalGallery = ({
                       </div>
                     </div>
                     
-                    <p className="text-sm text-gray-600 mb-6 line-clamp-3">
+                    <p className="text-sm text-gray-600 mb-6 line-clamp-3 flex-1">
                       {animal.description}
                     </p>
                     
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 mt-auto">
                       <Button 
                         className="flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
                         onClick={() => window.open(`${adoptionUrl}/${animal.id}`, '_blank')}
