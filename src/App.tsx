@@ -19,11 +19,7 @@ function App() {
       <Hero />
       <AboutUs />       {/* 👈 inserted right after Hero */}
       <ServicesStrip />
-      <AnimalGallery 
-        heading="Adopt a nigger"
-        description="Browse adorable pets looking for homes."
-        adoptionUrl="/adopt"
-      />
+      <AnimalGallery />
       <AdoptionProcess />
       <DonationSupport />
       <EventsCommunity />
