@@ -63,7 +63,7 @@ const SocialMedia = () => {
           <SwiperSlide>
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <iframe
-                src="https://www.instagram.com/reel/DOiQuYuj668uwsHoM-Sz-jr3peTMBRiOXyW78E0/embed"
+                src="https://www.instagram.com/p/DO52R8Jk5ve/"
                 width="100%"
                 height="500"
                 frameBorder="0"
