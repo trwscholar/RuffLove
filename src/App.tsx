@@ -3,7 +3,7 @@ import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import AboutUs from './components/AboutUs';   // 👈 new import
 import ServicesStrip from './components/ServicesStrip';
-import AvailablePets from './components/AvailablePets';
+import AnimalGallery from './components/AnimalGallery';
 import AdoptionProcess from './components/AdoptionProcess';
 import DonationSupport from './components/DonationSupport';
 import EventsCommunity from './components/EventsCommunity';
@@ -18,7 +18,11 @@ function App() {
       <Hero />
       <AboutUs />       {/* 👈 inserted right after Hero */}
       <ServicesStrip />
-      <AvailablePets />
+      <AnimalGallery 
+        heading="Adopt a Friend"
+        description="Browse adorable pets looking for homes."
+        adoptionUrl="/adopt"
+      />
       <AdoptionProcess />
       <DonationSupport />
       <EventsCommunity />
