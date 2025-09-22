@@ -1,46 +1,61 @@
 import React from "react";
-import aboutImg from "../assets/about-placeholder.png"; // replace with your image
+import aboutImg from "../assets/about-placeholder.png"; // use your actual image
 
 const AboutUs = () => {
   return (
-    <section id="about" className="relative py-20 bg-red-50">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* Left: Text */}
-        <div className="space-y-6">
-          <h4 className="text-sm font-semibold text-red-600 uppercase tracking-wider">
-            About Us
-          </h4>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-snug">
-            Who We Are at{" "}
-            <span className="text-red-600">Ruff Love Malaysia</span>
-          </h2>
-          <p className="text-lg text-gray-700 leading-relaxed">
-            At Ruff Love Malaysia, we believe that rescuing, rehabilitating, and
-            rehoming animals is more than just a mission — it’s a promise. Every
-            adoption not only saves a life, but it also opens up space for us to
-            help another animal in need.
-          </p>
-          <p className="text-lg text-gray-700 leading-relaxed">
-            With the dedication of our volunteers and the support of the
-            community, we continue to build a future where every pet has a safe
-            and loving home. Together, we make a difference, one paw at a time.
-          </p>
+    <section id="about" className="relative py-20 bg-red-50 overflow-hidden">
+      {/* Main content container */}
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* LEFT: Text */}
+          <div className="lg:col-span-5 space-y-6 relative z-10">
+            <h4 className="text-sm font-semibold text-red-600 uppercase tracking-wider">
+              About Us
+            </h4>
 
-          <button className="mt-6 inline-block bg-red-500 text-white font-semibold px-6 py-3 rounded-full shadow-md hover:bg-red-400 hover:scale-105 transition-transform duration-200">
-            Learn More
-          </button>
-        </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-snug">
+              Who We Are at <span className="text-red-600">Ruff Love Malaysia</span>
+            </h2>
 
-        {/* Right: Image */}
-        <div className="relative">
-          <img
-            src={aboutImg}
-            alt="About Ruff Love"
-            className="rounded-2xl shadow-lg object-cover w-full h-full max-h-[400px]"
-          />
-          {/* Subtle edge fade effect */}
-          <div className="absolute inset-0 bg-gradient-to-l from-red-50 via-transparent to-transparent rounded-2xl"></div>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              At Ruff Love Malaysia, we believe that rescuing, rehabilitating, and
+              rehoming animals is more than just a mission — it’s a promise. Every
+              adoption not only saves a life, but it also opens up space for us to
+              help another animal in need.
+            </p>
+
+            <p className="text-lg text-gray-700 leading-relaxed">
+              With the dedication of our volunteers and the support of the
+              community, we continue to build a future where every pet has a safe
+              and loving home. Together, we make a difference, one paw at a time.
+            </p>
+
+            <button className="mt-6 inline-flex items-center justify-center rounded-full bg-[#E53935] px-6 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-red-500 active:scale-95">
+              Learn More
+            </button>
+          </div>
+
+          {/* RIGHT: Image (mobile/tablet only) */}
+          <div className="lg:col-span-7 lg:hidden relative">
+            <img
+              src={aboutImg}
+              alt="About Ruff Love"
+              className="w-full h-[340px] sm:h-[420px] object-cover rounded-2xl shadow-lg"
+            />
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-red-50 via-red-50/80 to-transparent rounded-2xl" />
+          </div>
         </div>
+      </div>
+
+      {/* RIGHT: Image (desktop only) */}
+      <div className="hidden lg:block absolute inset-y-0 right-0 w-[50vw]">
+        <img
+          src={aboutImg}
+          alt="About Ruff Love"
+          className="w-full h-full object-cover"
+        />
+        {/* Wider fade so text stays clear */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-64 bg-gradient-to-r from-red-50 via-red-50/90 to-transparent" />
       </div>
     </section>
   );
