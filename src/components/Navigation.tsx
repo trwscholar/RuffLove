@@ -151,7 +151,7 @@ const Navigation = () => {
                 <FaInstagram className="w-6 h-6" />
               </a>
               <a
-                href="https://www.facebook.com/rufflove"
+                href="https://www.facebook.com/rufflove.my/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-red-500 transition-colors duration-200"
