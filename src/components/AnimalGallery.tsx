@@ -139,14 +139,14 @@ const AnimalGallery = ({
     <section id="adopt" className="py-16 bg-white">
       {/* Header Section */}
       <div className="max-w-6xl mx-auto px-4 mb-8 md:mb-14 lg:mb-16">
-        <div className="max-w-2xl">
+        <div className="text-center">
           <h2 className="mb-3 text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
             {heading}
           </h2>
-          <p className="text-gray-600 md:text-lg">
+          <p className="text-gray-600 md:text-lg max-w-2xl mx-auto">
             {description}
           </p>
-          <div className="flex justify-start mt-4">
+          <div className="flex justify-center mt-4">
             <div className="flex space-x-2">
               <span className="text-red-500">🐾</span>
               <span className="text-red-500">🐾</span>
@@ -199,12 +199,12 @@ const AnimalGallery = ({
             {animals.map((animal) => (
               <CarouselItem key={animal.id} className="pl-4 md:max-w-[380px] lg:max-w-[420px]">
                 <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[520px] flex flex-col">
-                  {/* Image Container */}
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
+                  {/* Image Container - Fixed aspect ratio takes up consistent space */}
+                  <div className="relative h-[240px] overflow-hidden rounded-t-2xl flex-shrink-0">
                     <img
                       src={animal.image}
                       alt={`${animal.name} - ${animal.breed}`}
-                      className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110 rounded-t-2xl"
+                      className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110"
                     />
                     
                     {/* Urgent Badge */}
@@ -230,18 +230,19 @@ const AnimalGallery = ({
                     </button>
                   </div>
                   
-                  {/* Content */}
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="mb-3 flex items-center justify-between">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-800 mb-1">
+                  {/* Content - Fixed structure with consistent spacing */}
+                  <div className="p-6 h-[280px] flex flex-col">
+                    {/* Header Info - Fixed height */}
+                    <div className="mb-3 flex items-center justify-between h-[60px]">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-xl font-bold text-gray-800 mb-1 truncate">
                           {animal.name}
                         </h3>
-                        <p className="text-sm text-gray-600 font-medium">
+                        <p className="text-sm text-gray-600 font-medium truncate">
                           {animal.breed}
                         </p>
                       </div>
-                      <div className={`rounded-full px-3 py-1 text-xs font-medium ${
+                      <div className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ml-2 ${
                         animal.gender === 'Male' 
                           ? 'bg-blue-100 text-blue-800' 
                           : 'bg-pink-100 text-pink-800'
@@ -250,17 +251,22 @@ const AnimalGallery = ({
                       </div>
                     </div>
                     
-                    <div className="mb-4 space-y-2">
+                    {/* Location Info - Fixed height */}
+                    <div className="mb-4 h-[20px] flex items-center">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <MapPin className="w-4 h-4" />
-                        <span>{animal.location}</span>
+                        <MapPin className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{animal.location}</span>
                       </div>
                     </div>
                     
-                    <p className="text-sm text-gray-600 mb-6 line-clamp-3 flex-1">
-                      {animal.description}
-                    </p>
+                    {/* Description - Fixed height with consistent line clamping */}
+                    <div className="mb-6 h-[60px] flex-shrink-0">
+                      <p className="text-sm text-gray-600 line-clamp-3 overflow-hidden">
+                        {animal.description}
+                      </p>
+                    </div>
                     
+                    {/* Buttons - Fixed at bottom */}
                     <div className="flex gap-3 mt-auto">
                       <Button 
                         className="flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
