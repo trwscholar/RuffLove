@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import { PawPrint, Bone as BoneIconLucide } from 'lucide-react';
 
 interface PawsAndBonesBackgroundProps {
   density?: number;
@@ -79,87 +80,45 @@ const PawsAndBonesBackground: React.FC<PawsAndBonesBackgroundProps> = ({
     return () => clearInterval(interval);
   }, [generateRandomIcon]);
 
+  // === NEW: use lucide-react icons ===
   const PawIcon = ({ size }: { size: number }) => (
-    <svg
+    <PawPrint
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="none"
       className="text-pink-400"
-    >
-      <ellipse cx="8" cy="6" rx="2" ry="3" fill="currentColor" />
-      <ellipse cx="16" cy="6" rx="2" ry="3" fill="currentColor" />
-      <ellipse cx="6" cy="12" rx="1.5" ry="2" fill="currentColor" />
-      <ellipse cx="18" cy="12" rx="1.5" ry="2" fill="currentColor" />
-      <ellipse cx="12" cy="16" rx="3" ry="4" fill="currentColor" />
-    </svg>
+      strokeWidth={2}
+    />
   );
 
   const BoneIcon = ({ size }: { size: number }) => (
-    <svg
+    <BoneIconLucide
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="none"
       className="text-pink-500"
-    >
-      <path
-        d="M6 12h12M6 12c-1.5-1.5-3-1-3-3s1.5-1.5 3 0M6 12c-1.5 1.5-3 1-3 3s1.5 1.5 3 0M18 12c1.5-1.5 3-1 3-3s-1.5-1.5-3 0M18 12c1.5 1.5 3 1 3 3s-1.5 1.5-3 0"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="currentColor"
-      />
-    </svg>
+      strokeWidth={2}
+    />
   );
+  // ===================================
 
   return (
     <>
       <style jsx>{`
         @keyframes pawPop {
-          0% {
-            transform: scale(0) rotate(0deg);
-            opacity: 0;
-          }
-          15% {
-            transform: scale(1.2) rotate(5deg);
-            opacity: 0.8;
-          }
-          85% {
-            transform: scale(1) rotate(-5deg);
-            opacity: 0.6;
-          }
-          100% {
-            transform: scale(0) rotate(10deg);
-            opacity: 0;
-          }
+          0% { transform: scale(0) rotate(0deg); opacity: 0; }
+          15% { transform: scale(1.2) rotate(5deg); opacity: 0.8; }
+          85% { transform: scale(1) rotate(-5deg); opacity: 0.6; }
+          100% { transform: scale(0) rotate(10deg); opacity: 0; }
         }
-        
         @keyframes bonePop {
-          0% {
-            transform: scale(0) rotate(0deg);
-            opacity: 0;
-          }
-          20% {
-            transform: scale(1.1) rotate(180deg);
-            opacity: 0.7;
-          }
-          80% {
-            transform: scale(1) rotate(360deg);
-            opacity: 0.5;
-          }
-          100% {
-            transform: scale(0) rotate(540deg);
-            opacity: 0;
-          }
+          0% { transform: scale(0) rotate(0deg); opacity: 0; }
+          20% { transform: scale(1.1) rotate(180deg); opacity: 0.7; }
+          80% { transform: scale(1) rotate(360deg); opacity: 0.5; }
+          100% { transform: scale(0) rotate(540deg); opacity: 0; }
         }
-        
         .paw-animation {
           animation: pawPop var(--duration) ease-in-out infinite;
           animation-delay: var(--delay);
         }
-        
         .bone-animation {
           animation: bonePop var(--duration) ease-in-out infinite;
           animation-delay: var(--delay);
