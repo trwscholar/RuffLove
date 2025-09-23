@@ -9,3 +9,4 @@ const supabaseAnonKey =
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default supabase;
+ 
