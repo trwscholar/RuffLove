@@ -1,15 +1,10 @@
 import React from 'react';
 import { Heart, Dog, MessageCircle } from 'lucide-react';
-import PawsAndBonesBackground from './PawsAndBonesBackground';
 
 const Hero = () => {
   return (
-    <section id="home" className="relative min-h-screen bg-gradient-to-br from-pink-50 via-white to-pink-100 flex items-center justify-center px-4 overflow-hidden">
-      {/* Animated Background */}
-      <PawsAndBonesBackground density={25} speed={0.8} iconSize={18} />
-      
-      {/* Content */}
-      <div className="relative z-10 text-center max-w-4xl">
+    <section id="home" className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="text-center max-w-4xl">
         {/* Logo with Heart */}
         <div className="mb-8 flex justify-center">
           <div className="relative">
