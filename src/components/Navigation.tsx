@@ -80,7 +80,7 @@ const Navigation = () => {
 
               {/* Social Icons */}
               <a
-                href="https://www.instagram.com/rufflove" // replace with actual IG link
+                href="https://www.instagram.com/rufflove.my/" // replace with actual IG link
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-red-500 transition-colors duration-200"
