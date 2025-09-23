@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { FaInstagram, FaFacebook } from "react-icons/fa";
 import ruffLogo from "../assets/rufflovelogo.png";
 
-const Navigation = () => {
+const Navigation: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -17,82 +16,53 @@ const Navigation = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Track active section based on scroll position
+  // Track active section
   useEffect(() => {
     if (location.pathname !== "/") {
-      setActiveSection(""); 
+      setActiveSection("");
       return;
     }
 
-    const handleScroll = () => {
-      const sections = ["about", "adopt", "donate", "events", "contact"];
-      const navHeight = 64;
+    const sections = ["about", "adopt", "donate", "events", "contact"];
+    const navHeight = 64;
 
+    const handleScroll = () => {
       if (window.scrollY < 200) {
         setActiveSection("home");
         return;
       }
 
-      let foundActiveSection = "";
-      for (const sectionId of sections) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const elementTop = rect.top + window.scrollY - navHeight;
-          const elementBottom = elementTop + rect.height;
-
-          if (
-            window.scrollY >= elementTop - 150 &&
-            window.scrollY < elementBottom - 100
-          ) {
-            foundActiveSection = sectionId;
-            break;
+      let found = "";
+      sections.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop - navHeight - 50;
+          const bottom = top + el.offsetHeight;
+          if (window.scrollY >= top && window.scrollY < bottom) {
+            found = id;
           }
         }
-      }
+      });
 
-      if (!foundActiveSection && window.scrollY >= 200) {
-        for (const sectionId of sections) {
-          const element = document.getElementById(sectionId);
-          if (element) {
-            const rect = element.getBoundingClientRect();
-            if (rect.top <= navHeight + 150) {
-              foundActiveSection = sectionId;
-            }
-          }
-        }
-      }
-
-      if (foundActiveSection) {
-        setActiveSection(foundActiveSection);
-      }
+      if (found) setActiveSection(found);
     };
 
     window.addEventListener("scroll", handleScroll);
     handleScroll();
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, [location.pathname]);
 
-  // Smooth scroll to section function
   const scrollToSection = (sectionId: string) => {
     if (location.pathname !== "/") {
-      // Navigate to homepage first, then scroll after a short delay
-      navigate("/", { replace: false });
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 50); // short delay to allow DOM to render
+      window.location.href = `/#${sectionId}`;
       return;
     }
 
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    const el = document.getElementById(sectionId);
+    if (el) {
+      const top = el.offsetTop - 64; // nav height
+      window.scrollTo({ top, behavior: "smooth" });
     }
-
     setIsMobileMenuOpen(false);
   };
 
@@ -120,65 +90,68 @@ const Navigation = () => {
       >
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2" onClick={scrollToTop}>
-              <img src={ruffLogo} alt="Ruff Love Malaysia" className="h-12 w-auto object-contain select-none" draggable={false} />
-              <span className="text-xl font-bold text-gray-800 font-rounded">Ruff Love Malaysia</span>
+            <Link to="/" className="flex items-center space-x-2">
+              <img src={ruffLogo} alt="Ruff Love Malaysia" className="h-12 w-auto" draggable={false} />
+              <span className="text-xl font-bold text-gray-800">Ruff Love Malaysia</span>
             </Link>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Nav */}
             <div className="hidden md:flex items-center space-x-8">
-              {navLinks.map((link) =>
-                link.type === "route" ? (
-                  <Link
-                    key={link.id}
-                    to={link.path}
-                    onClick={link.id === "home" ? scrollToTop : undefined}
-                    className={`relative text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
-                      activeSection === link.id ? "text-red-500" : ""
-                    }`}
-                  >
-                    {link.label}
-                    {activeSection === link.id && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full"></div>}
-                  </Link>
-                ) : (
-                  <button
-                    key={link.id}
-                    onClick={() => scrollToSection(link.sectionId)}
-                    className={`relative text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium focus:outline-none ${
-                      activeSection === link.sectionId ? "text-red-500" : ""
-                    }`}
-                  >
-                    {link.label}
-                    {activeSection === link.sectionId && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full"></div>}
-                  </button>
-                )
-              )}
+              {navLinks.map((link) => {
+                const isActive =
+                  link.type === "route"
+                    ? location.pathname === link.path && (link.id === "home" ? activeSection === "home" : true)
+                    : activeSection === link.sectionId;
+
+                if (link.type === "route") {
+                  return (
+                    <Link
+                      key={link.id}
+                      to={link.path}
+                      onClick={link.id === "home" ? scrollToTop : undefined}
+                      className={`relative text-gray-700 hover:text-red-500 font-medium ${isActive ? "text-red-500" : ""}`}
+                    >
+                      {link.label}
+                      {isActive && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full" />}
+                    </Link>
+                  );
+                } else {
+                  return (
+                    <button
+                      key={link.id}
+                      onClick={() => scrollToSection(link.sectionId)}
+                      className={`relative text-gray-700 hover:text-red-500 font-medium focus:outline-none ${isActive ? "text-red-500" : ""}`}
+                    >
+                      {link.label}
+                      {isActive && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full" />}
+                    </button>
+                  );
+                }
+              })}
             </div>
 
-            {/* Desktop CTA + Social Icons */}
+            {/* Desktop CTA */}
             <div className="hidden md:flex items-center space-x-4">
               <button
                 onClick={() => scrollToSection("adopt")}
-                className="group bg-red-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-red-400 hover:scale-105 active:scale-95 transition-all duration-200 hover:shadow-pink-200 hover:shadow-lg"
+                className="bg-red-500 text-white px-6 py-2 rounded-full font-bold hover:bg-red-400 transition"
               >
                 Adopt Now
               </button>
-
-              <a href="https://www.instagram.com/rufflove" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500 transition-colors duration-200">
+              <a href="https://www.instagram.com/rufflove" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500">
                 <FaInstagram className="w-6 h-6" />
               </a>
-              <a href="https://www.facebook.com/rufflove" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500 transition-colors duration-200">
+              <a href="https://www.facebook.com/rufflove" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500">
                 <FaFacebook className="w-6 h-6" />
               </a>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu */}
             <div className="md:hidden flex items-center space-x-2">
-              <button onClick={() => scrollToSection("adopt")} className="bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm shadow-md hover:bg-red-400 transition-colors duration-200">
+              <button onClick={() => scrollToSection("adopt")} className="bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm">
                 Adopt Now
               </button>
-              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-700 hover:text-red-500 transition-colors duration-200">
+              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-700">
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
@@ -194,9 +167,7 @@ const Navigation = () => {
                   key={link.id}
                   to={link.path}
                   onClick={link.id === "home" ? scrollToTop : () => setIsMobileMenuOpen(false)}
-                  className={`block py-2 text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
-                    activeSection === link.id ? "text-red-500 border-l-2 border-red-500 pl-2" : ""
-                  }`}
+                  className={`block py-2 text-gray-700 hover:text-red-500 font-medium ${activeSection === link.id ? "text-red-500" : ""}`}
                 >
                   {link.label}
                 </Link>
@@ -204,9 +175,7 @@ const Navigation = () => {
                 <button
                   key={link.id}
                   onClick={() => scrollToSection(link.sectionId)}
-                  className={`block w-full text-left py-2 text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium focus:outline-none ${
-                    activeSection === link.sectionId ? "text-red-500 border-l-2 border-red-500 pl-2" : ""
-                  }`}
+                  className={`block w-full text-left py-2 text-gray-700 hover:text-red-500 font-medium ${activeSection === link.sectionId ? "text-red-500" : ""}`}
                 >
                   {link.label}
                 </button>
@@ -214,19 +183,17 @@ const Navigation = () => {
             )}
 
             <div className="pt-3 border-t border-gray-100 flex space-x-4">
-              <a href="https://www.instagram.com/rufflove.my/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500 transition-colors duration-200">
+              <a href="https://www.instagram.com/rufflove.my/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500">
                 <FaInstagram className="w-6 h-6" />
               </a>
-              <a href="https://www.facebook.com/rufflove.my/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500 transition-colors duration-200">
+              <a href="https://www.facebook.com/rufflove.my/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500">
                 <FaFacebook className="w-6 h-6" />
               </a>
             </div>
           </div>
         </div>
       </nav>
-
-      {/* Spacer */}
-      <div className="h-16"></div>
+      <div className="h-16" /> {/* spacer */}
     </>
   );
 };
