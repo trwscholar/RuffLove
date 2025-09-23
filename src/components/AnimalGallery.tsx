@@ -197,10 +197,10 @@ const AnimalGallery = ({
         >
           <CarouselContent className="ml-4 2xl:ml-[max(4rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))]">
             {animals.map((animal) => (
-              <CarouselItem key={animal.id} className="pl-4 md:max-w-[380px] lg:max-w-[420px]">
-                <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[520px] flex flex-col">
+              <CarouselItem key={animal.id} className="pl-4 md:max-w-[320px] lg:max-w-[360px]">
+                <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col">
                   {/* Image Container - Fixed aspect ratio takes up consistent space */}
-                  <div className="relative h-[240px] overflow-hidden rounded-t-2xl flex-shrink-0">
+                  <div className="relative h-[200px] overflow-hidden rounded-t-2xl flex-shrink-0">
                     <img
                       src={animal.image}
                       alt={`${animal.name} - ${animal.breed}`}
@@ -231,9 +231,9 @@ const AnimalGallery = ({
                   </div>
                   
                   {/* Content - Fixed structure with consistent spacing */}
-                  <div className="p-6 h-[280px] flex flex-col">
+                  <div className="p-5 h-[240px] flex flex-col">
                     {/* Header Info - Fixed height */}
-                    <div className="mb-3 flex items-center justify-between h-[60px]">
+                    <div className="mb-3 flex items-center justify-between h-[50px]">
                       <div className="flex-1 min-w-0">
                         <h3 className="text-xl font-bold text-gray-800 mb-1 truncate">
                           {animal.name}
@@ -260,7 +260,7 @@ const AnimalGallery = ({
                     </div>
                     
                     {/* Description - Fixed height with consistent line clamping */}
-                    <div className="mb-6 h-[60px] flex-shrink-0">
+                    <div className="mb-5 h-[50px] flex-shrink-0">
                       <p className="text-sm text-gray-600 line-clamp-3 overflow-hidden">
                         {animal.description}
                       </p>
