@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { FaInstagram, FaFacebook } from "react-icons/fa";
 import ruffLogo from "../assets/rufflovelogo.png";
@@ -9,6 +9,7 @@ const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -19,7 +20,7 @@ const Navigation = () => {
   // Track active section based on scroll position
   useEffect(() => {
     if (location.pathname !== "/") {
-      setActiveSection(""); // Clear active section when not on homepage
+      setActiveSection(""); 
       return;
     }
 
@@ -76,30 +77,27 @@ const Navigation = () => {
   // Smooth scroll to section function
   const scrollToSection = (sectionId: string) => {
     if (location.pathname !== "/") {
-      // ✅ FIX: use template string, not regex
-      window.location.href = `/#${sectionId}`;
+      // Navigate to homepage first, then scroll after a short delay
+      navigate("/", { replace: false });
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 50); // short delay to allow DOM to render
       return;
     }
 
     const element = document.getElementById(sectionId);
     if (element) {
-      const navHeight = 64;
-      const elementPosition = element.offsetTop - navHeight;
-
-      window.scrollTo({
-        top: elementPosition,
-        behavior: "smooth",
-      });
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     setIsMobileMenuOpen(false);
   };
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setIsMobileMenuOpen(false);
   };
 
@@ -123,67 +121,39 @@ const Navigation = () => {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <img
-                src={ruffLogo}
-                alt="Ruff Love Malaysia"
-                className="h-12 w-auto object-contain select-none"
-                draggable={false}
-              />
-              <span className="text-xl font-bold text-gray-800 font-rounded">
-                Ruff Love Malaysia
-              </span>
+            <Link to="/" className="flex items-center space-x-2" onClick={scrollToTop}>
+              <img src={ruffLogo} alt="Ruff Love Malaysia" className="h-12 w-auto object-contain select-none" draggable={false} />
+              <span className="text-xl font-bold text-gray-800 font-rounded">Ruff Love Malaysia</span>
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {navLinks.map((link) => {
-                let isActive = false;
-
-                if (link.type === "route") {
-                  if (link.id === "home") {
-                    isActive =
-                      location.pathname === link.path && activeSection === "home";
-                  } else {
-                    isActive = location.pathname === link.path;
-                  }
-                } else {
-                  isActive = activeSection === link.sectionId;
-                }
-
-                if (link.type === "route") {
-                  return (
-                    <Link
-                      key={link.id}
-                      to={link.path}
-                      onClick={link.id === "home" ? scrollToTop : undefined}
-                      className={`relative text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
-                        isActive ? "text-red-500" : ""
-                      }`}
-                    >
-                      {link.label}
-                      {isActive && (
-                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full"></div>
-                      )}
-                    </Link>
-                  );
-                } else {
-                  return (
-                    <button
-                      key={link.id}
-                      onClick={() => scrollToSection(link.sectionId)}
-                      className={`relative text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium focus:outline-none ${
-                        isActive ? "text-red-500" : ""
-                      }`}
-                    >
-                      {link.label}
-                      {isActive && (
-                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full"></div>
-                      )}
-                    </button>
-                  );
-                }
-              })}
+              {navLinks.map((link) =>
+                link.type === "route" ? (
+                  <Link
+                    key={link.id}
+                    to={link.path}
+                    onClick={link.id === "home" ? scrollToTop : undefined}
+                    className={`relative text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
+                      activeSection === link.id ? "text-red-500" : ""
+                    }`}
+                  >
+                    {link.label}
+                    {activeSection === link.id && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full"></div>}
+                  </Link>
+                ) : (
+                  <button
+                    key={link.id}
+                    onClick={() => scrollToSection(link.sectionId)}
+                    className={`relative text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium focus:outline-none ${
+                      activeSection === link.sectionId ? "text-red-500" : ""
+                    }`}
+                  >
+                    {link.label}
+                    {activeSection === link.sectionId && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500 rounded-full"></div>}
+                  </button>
+                )
+              )}
             </div>
 
             {/* Desktop CTA + Social Icons */}
@@ -192,39 +162,23 @@ const Navigation = () => {
                 onClick={() => scrollToSection("adopt")}
                 className="group bg-red-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-red-400 hover:scale-105 active:scale-95 transition-all duration-200 hover:shadow-pink-200 hover:shadow-lg"
               >
-                <span className="relative z-10">Adopt Now</span>
+                Adopt Now
               </button>
 
-              <a
-                href="https://www.instagram.com/rufflove"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-red-500 transition-colors duration-200"
-              >
+              <a href="https://www.instagram.com/rufflove" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500 transition-colors duration-200">
                 <FaInstagram className="w-6 h-6" />
               </a>
-              <a
-                href="https://www.facebook.com/rufflove"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-red-500 transition-colors duration-200"
-              >
+              <a href="https://www.facebook.com/rufflove" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500 transition-colors duration-200">
                 <FaFacebook className="w-6 h-6" />
               </a>
             </div>
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-2">
-              <button
-                onClick={() => scrollToSection("adopt")}
-                className="bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm shadow-md hover:bg-red-400 transition-colors duration-200"
-              >
+              <button onClick={() => scrollToSection("adopt")} className="bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm shadow-md hover:bg-red-400 transition-colors duration-200">
                 Adopt Now
               </button>
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-gray-700 hover:text-red-500 transition-colors duration-200"
-              >
+              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-700 hover:text-red-500 transition-colors duration-200">
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
@@ -232,71 +186,38 @@ const Navigation = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div
-          className={`md:hidden transition-all duration-300 ${
-            isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
-          }`}
-        >
+        <div className={`md:hidden transition-all duration-300 ${isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}>
           <div className="bg-white border-t border-gray-100 px-4 py-4 space-y-3">
-            {navLinks.map((link) => {
-              let isActive = false;
-
-              if (link.type === "route") {
-                if (link.id === "home") {
-                  isActive =
-                    location.pathname === link.path && activeSection === "home";
-                } else {
-                  isActive = location.pathname === link.path;
-                }
-              } else {
-                isActive = activeSection === link.sectionId;
-              }
-
-              if (link.type === "route") {
-                return (
-                  <Link
-                    key={link.id}
-                    to={link.path}
-                    onClick={
-                      link.id === "home" ? scrollToTop : () => setIsMobileMenuOpen(false)
-                    }
-                    className={`block py-2 text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
-                      isActive ? "text-red-500 border-l-2 border-red-500 pl-2" : ""
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              } else {
-                return (
-                  <button
-                    key={link.id}
-                    onClick={() => scrollToSection(link.sectionId)}
-                    className={`block w-full text-left py-2 text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium focus:outline-none ${
-                      isActive ? "text-red-500 border-l-2 border-red-500 pl-2" : ""
-                    }`}
-                  >
-                    {link.label}
-                  </button>
-                );
-              }
-            })}
+            {navLinks.map((link) =>
+              link.type === "route" ? (
+                <Link
+                  key={link.id}
+                  to={link.path}
+                  onClick={link.id === "home" ? scrollToTop : () => setIsMobileMenuOpen(false)}
+                  className={`block py-2 text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium ${
+                    activeSection === link.id ? "text-red-500 border-l-2 border-red-500 pl-2" : ""
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <button
+                  key={link.id}
+                  onClick={() => scrollToSection(link.sectionId)}
+                  className={`block w-full text-left py-2 text-gray-700 hover:text-red-500 transition-colors duration-200 font-medium focus:outline-none ${
+                    activeSection === link.sectionId ? "text-red-500 border-l-2 border-red-500 pl-2" : ""
+                  }`}
+                >
+                  {link.label}
+                </button>
+              )
+            )}
 
             <div className="pt-3 border-t border-gray-100 flex space-x-4">
-              <a
-                href="https://www.instagram.com/rufflove.my/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-red-500 transition-colors duration-200"
-              >
+              <a href="https://www.instagram.com/rufflove.my/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500 transition-colors duration-200">
                 <FaInstagram className="w-6 h-6" />
               </a>
-              <a
-                href="https://www.facebook.com/rufflove.my/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-red-500 transition-colors duration-200"
-              >
+              <a href="https://www.facebook.com/rufflove.my/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-red-500 transition-colors duration-200">
                 <FaFacebook className="w-6 h-6" />
               </a>
             </div>
@@ -304,6 +225,7 @@ const Navigation = () => {
         </div>
       </nav>
 
+      {/* Spacer */}
       <div className="h-16"></div>
     </>
   );
