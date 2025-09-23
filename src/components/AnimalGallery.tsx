@@ -274,14 +274,6 @@ const AnimalGallery = ({
                       >
                         Adopt Me
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon"
-                        className="rounded-full"
-                        onClick={() => window.open(`${adoptionUrl}/${animal.id}`, '_blank')}
-                      >
-                        <ArrowRight className="w-4 h-4" />
-                      </Button>
                     </div>
                   </div>
                 </div>
