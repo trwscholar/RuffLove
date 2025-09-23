@@ -137,51 +137,53 @@ const AnimalGallery = ({
 
   return (
     <section id="adopt" className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="mb-8 flex flex-col justify-between md:mb-14 md:flex-row md:items-end lg:mb-16">
-          <div className="max-w-2xl">
-            <h2 className="mb-3 text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
-              {heading}
-            </h2>
-            <p className="text-gray-600 md:text-lg">
-              {description}
-            </p>
-            <div className="flex justify-start mt-4">
-              <div className="flex space-x-2">
-                <span className="text-red-500">🐾</span>
-                <span className="text-red-500">🐾</span>
-                <span className="text-red-500">🐾</span>
-              </div>
+      {/* Header Section */}
+      <div className="max-w-6xl mx-auto px-4 mb-8 md:mb-14 lg:mb-16">
+        <div className="max-w-2xl">
+          <h2 className="mb-3 text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
+            {heading}
+          </h2>
+          <p className="text-gray-600 md:text-lg">
+            {description}
+          </p>
+          <div className="flex justify-start mt-4">
+            <div className="flex space-x-2">
+              <span className="text-red-500">🐾</span>
+              <span className="text-red-500">🐾</span>
+              <span className="text-red-500">🐾</span>
             </div>
-          </div>
-          <div className="mt-8 flex shrink-0 items-center justify-start gap-2 md:mt-0">
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={() => {
-                carouselApi?.scrollPrev();
-              }}
-              disabled={!canScrollPrev}
-              className="disabled:pointer-events-auto ml-8"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={() => {
-                carouselApi?.scrollNext();
-              }}
-              disabled={!canScrollNext}
-              className="disabled:pointer-events-auto"
-            >
-              <ArrowRight className="w-5 h-5" />
-            </Button>
           </div>
         </div>
       </div>
       
-      <div className="w-full">
+      {/* Gallery with Navigation Arrows */}
+      <div className="relative w-full">
+        {/* Left Arrow */}
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => {
+            carouselApi?.scrollPrev();
+          }}
+          disabled={!canScrollPrev}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-gray-200 hover:bg-white hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </Button>
+
+        {/* Right Arrow */}
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => {
+            carouselApi?.scrollNext();
+          }}
+          disabled={!canScrollNext}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-gray-200 hover:bg-white hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ArrowRight className="w-6 h-6" />
+        </Button>
+
         <Carousel
           setApi={setCarouselApi}
           opts={{
@@ -191,7 +193,7 @@ const AnimalGallery = ({
               },
             },
           }}
-          className="relative"
+          className="w-full"
         >
           <CarouselContent className="ml-4 2xl:ml-[max(4rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))]">
             {animals.map((animal) => (
