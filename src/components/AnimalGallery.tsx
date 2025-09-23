@@ -157,7 +157,7 @@ const AnimalGallery = ({
       </div>
       
       {/* Gallery with Navigation Arrows */}
-      <div className="relative w-full ">
+      <div className="relative w-full">
         {/* Left Arrow */}
         <Button
           size="icon"
@@ -192,10 +192,10 @@ const AnimalGallery = ({
                 dragFree: true,
               },
             },
-          }} 
+          }}
           className="w-full"
         >
-          <CarouselContent className="ml-4 2xl:ml-[max(4rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))] py-8">
+          <CarouselContent className="ml-4 2xl:ml-[max(4rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))]">
             {animals.map((animal) => (
               <CarouselItem key={animal.id} className="pl-4 md:max-w-[320px] lg:max-w-[360px]">
                 <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col">
