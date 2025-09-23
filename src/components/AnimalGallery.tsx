@@ -156,89 +156,131 @@ const AnimalGallery = ({
         </div>
       </div>
       
-      {/* Gallery Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-        {animals.map((animal) => (
-          <div key={animal.id} className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col">
-            {/* Image Container - Fixed aspect ratio takes up consistent space */}
-            <div className="relative h-[200px] overflow-hidden rounded-t-2xl flex-shrink-0">
-              <img
-                src={animal.image}
-                alt={`${animal.name} - ${animal.breed}`}
-                className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110"
-              />
-              
-              {/* Urgent Badge */}
-              {animal.isUrgent && (
-                <div className="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium">
-                  Urgent
+      {/* Gallery with Navigation Arrows */}
+      <div className="relative w-full">
+        {/* Left Arrow */}
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => {
+            carouselApi?.scrollPrev();
+          }}
+          disabled={!canScrollPrev}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-gray-200 hover:bg-white hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </Button>
+
+        {/* Right Arrow */}
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => {
+            carouselApi?.scrollNext();
+          }}
+          disabled={!canScrollNext}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-gray-200 hover:bg-white hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ArrowRight className="w-6 h-6" />
+        </Button>
+
+        <Carousel
+          setApi={setCarouselApi}
+          opts={{
+            breakpoints: {
+              "(max-width: 768px)": {
+                dragFree: true,
+              },
+            },
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="ml-4 2xl:ml-[max(4rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))]">
+            {animals.map((animal) => (
+              <CarouselItem key={animal.id} className="pl-4 md:max-w-[320px] lg:max-w-[360px]">
+                <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col">
+                  {/* Image Container - Fixed aspect ratio takes up consistent space */}
+                  <div className="relative h-[200px] overflow-hidden rounded-t-2xl flex-shrink-0">
+                    <img
+                      src={animal.image}
+                      alt={`${animal.name} - ${animal.breed}`}
+                      className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110"
+                    />
+                    
+                    {/* Urgent Badge */}
+                    {animal.isUrgent && (
+                      <div className="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        Urgent
+                      </div>
+                    )}
+                    
+                    {/* Favorite Button */}
+                    <button
+                      onClick={() => toggleFavorite(animal.id)}
+                      className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
+                    >
+                      <Heart 
+                        className={cn(
+                          "w-4 h-4 transition-colors",
+                          favorites.has(animal.id) || animal.isFavorite
+                            ? "fill-red-500 text-red-500" 
+                            : "text-gray-600 hover:text-red-500"
+                        )} 
+                      />
+                    </button>
+                  </div>
+                  
+                  {/* Content - Fixed structure with consistent spacing */}
+                  <div className="p-5 h-[240px] flex flex-col">
+                    {/* Header Info - Fixed height */}
+                    <div className="mb-3 flex items-center justify-between h-[50px]">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-xl font-bold text-gray-800 mb-1 truncate">
+                          {animal.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 font-medium truncate">
+                          {animal.breed}
+                        </p>
+                      </div>
+                      <div className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ml-2 ${
+                        animal.gender === 'Male' 
+                          ? 'bg-blue-100 text-blue-800' 
+                          : 'bg-pink-100 text-pink-800'
+                      }`}>
+                        {animal.age} • {animal.gender}
+                      </div>
+                    </div>
+                    
+                    {/* Location Info - Fixed height */}
+                    <div className="mb-4 h-[20px] flex items-center">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <MapPin className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{animal.location}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Description - Fixed height with consistent line clamping */}
+                    <div className="mb-5 h-[50px] flex-shrink-0">
+                      <p className="text-sm text-gray-600 line-clamp-3 overflow-hidden">
+                        {animal.description}
+                      </p>
+                    </div>
+                    
+                    {/* Buttons - Fixed at bottom */}
+                    <div className="flex gap-3 mt-auto">
+                      <Button 
+                        className="flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
+                        onClick={() => window.open(`${adoptionUrl}/${animal.id}`, '_blank')}
+                      >
+                        Adopt Me
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              )}
-              
-              {/* Favorite Button */}
-              <button
-                onClick={() => toggleFavorite(animal.id)}
-                className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
-              >
-                <Heart 
-                  className={cn(
-                    "w-4 h-4 transition-colors",
-                    favorites.has(animal.id) || animal.isFavorite
-                      ? "fill-red-500 text-red-500" 
-                      : "text-gray-600 hover:text-red-500"
-                  )} 
-                />
-              </button>
-            </div>
-            
-            {/* Content - Fixed structure with consistent spacing */}
-            <div className="p-5 h-[240px] flex flex-col">
-              {/* Header Info - Fixed height */}
-              <div className="mb-3 flex items-center justify-between h-[50px]">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-gray-800 mb-1 truncate">
-                    {animal.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 font-medium truncate">
-                    {animal.breed}
-                  </p>
-                </div>
-                <div className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ml-2 ${
-                  animal.gender === 'Male' 
-                    ? 'bg-blue-100 text-blue-800' 
-                    : 'bg-pink-100 text-pink-800'
-                }`}>
-                  {animal.age} • {animal.gender}
-                </div>
-              </div>
-              
-              {/* Location Info - Fixed height */}
-              <div className="mb-4 h-[20px] flex items-center">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <MapPin className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">{animal.location}</span>
-                </div>
-              </div>
-              
-              {/* Description - Fixed height with consistent line clamping */}
-              <div className="mb-5 h-[50px] flex-shrink-0">
-                <p className="text-sm text-gray-600 line-clamp-3 overflow-hidden">
-                  {animal.description}
-                </p>
-              </div>
-              
-              {/* Buttons - Fixed at bottom */}
-              <div className="flex gap-3 mt-auto">
-                <Button 
-                  className="flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
-                  onClick={() => window.open(`${adoptionUrl}/${animal.id}`, '_blank')}
-                >
-                  Adopt Me
-                </Button>
-              </div>
-            </div>
-          </div>
-        ))}
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       </div>
       
       <div className="text-center mt-12">
