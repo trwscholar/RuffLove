@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ArrowLeft, ArrowRight, Heart, MapPin } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from './ui/Carousel';
@@ -13,7 +13,7 @@ interface AnimalGalleryItem {
   gender: string;
   location: string;
   description: string;
-  image_url: string; // ← use image_url from table
+  image_url: string;
   isUrgent?: boolean;
   isFavorite?: boolean;
 }
@@ -54,7 +54,7 @@ const AnimalGallery = ({
       gender: item.gender,
       location: item.location,
       description: item.description,
-      image_url: item.image_url, // ← use storage/public URL directly
+      image_url: item.image_url,
       isUrgent: item.isUrgent,
       isFavorite: false,
     }));
@@ -62,25 +62,61 @@ const AnimalGallery = ({
     setAnimals(mappedAnimals);
   };
 
+  const updateScrollButtons = useCallback(() => {
+    if (!carouselApi) return;
+    
+    setCanScrollPrev(carouselApi.canScrollPrev());
+    setCanScrollNext(carouselApi.canScrollNext());
+  }, [carouselApi]);
+
+  const handleScrollPrev = useCallback(() => {
+    if (carouselApi) {
+      carouselApi.scrollPrev();
+    }
+  }, [carouselApi]);
+
+  const handleScrollNext = useCallback(() => {
+    if (carouselApi) {
+      carouselApi.scrollNext();
+    }
+  }, [carouselApi]);
+
   useEffect(() => {
     fetchGallery();
   }, []);
 
+  // Initialize carousel API and set up event listeners
   useEffect(() => {
     if (!carouselApi) return;
 
-    const updateSelection = () => {
-      setCanScrollPrev(carouselApi.canScrollPrev());
-      setCanScrollNext(carouselApi.canScrollNext());
-    };
+    // Initial button state update
+    updateScrollButtons();
 
-    updateSelection();
-    carouselApi.on("select", updateSelection);
+    // Set up event listeners
+    const handleSelect = () => updateScrollButtons();
+    const handleResize = () => updateScrollButtons();
+    
+    carouselApi.on('select', handleSelect);
+    carouselApi.on('resize', handleResize);
+    carouselApi.on('reInit', handleSelect);
 
+    // Cleanup
     return () => {
-      carouselApi.off("select", updateSelection);
+      carouselApi.off('select', handleSelect);
+      carouselApi.off('resize', handleResize);
+      carouselApi.off('reInit', handleSelect);
     };
-  }, [carouselApi]);
+  }, [carouselApi, updateScrollButtons]);
+
+  // Update button states when animals change
+  useEffect(() => {
+    if (carouselApi && animals.length > 0) {
+      // Small delay to ensure carousel has rendered the new content
+      setTimeout(() => {
+        updateScrollButtons();
+      }, 100);
+    }
+  }, [animals, carouselApi, updateScrollButtons]);
 
   const toggleFavorite = (animalId: string) => {
     setFavorites(prev => {
@@ -105,25 +141,31 @@ const AnimalGallery = ({
         <Button
           size="icon"
           variant="outline"
-          onClick={() => carouselApi?.scrollPrev()}
-          disabled={!canScrollPrev}
+          onClick={handleScrollPrev}
+          disabled={!canScrollPrev || !carouselApi}
           className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-gray-200 hover:bg-white hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Previous animals"
         >
           <ArrowLeft className="w-6 h-6" />
         </Button>
         <Button
           size="icon"
           variant="outline"
-          onClick={() => carouselApi?.scrollNext()}
-          disabled={!canScrollNext}
+          onClick={handleScrollNext}
+          disabled={!canScrollNext || !carouselApi}
           className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-gray-200 hover:bg-white hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Next animals"
         >
           <ArrowRight className="w-6 h-6" />
         </Button>
 
         <Carousel
           setApi={setCarouselApi}
-          opts={{ breakpoints: { "(max-width: 768px)": { dragFree: true } } }}
+          opts={{ 
+            breakpoints: { "(max-width: 768px)": { dragFree: true } },
+            loop: false,
+            align: "start"
+          }}
           className="w-full"
         >
           <CarouselContent className="ml-4 2xl:ml-[max(4rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))] py-8">
@@ -132,7 +174,7 @@ const AnimalGallery = ({
                 <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col">
                   <div className="relative h-[200px] overflow-hidden rounded-t-2xl flex-shrink-0">
                     <img
-                      src={animal.image_url} // ← use storage URL directly
+                      src={animal.image_url}
                       alt={`${animal.name} - ${animal.breed}`}
                       className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110"
                     />
@@ -144,6 +186,7 @@ const AnimalGallery = ({
                     <button
                       onClick={() => toggleFavorite(animal.id)}
                       className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
+                      aria-label={`${favorites.has(animal.id) ? 'Remove from' : 'Add to'} favorites`}
                     >
                       <Heart
                         className={cn(
