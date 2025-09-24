@@ -25,8 +25,9 @@ function AdminPanel() {
   const [breed, setBreed] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState(""); // Stores public URL
-  const [imagePath, setImagePath] = useState(""); // Stores storage path for deletion
+  const [imageUrl, setImageUrl] = useState(""); // Public URL for preview
+  const [imagePath, setImagePath] = useState(""); // Storage path for deletion
+  const [oldImagePath, setOldImagePath] = useState(""); // Original image path for editing
   const [isUrgent, setIsUrgent] = useState(false);
 
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ function AdminPanel() {
     const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
     const filePath = `${fileName}`;
 
-    // Upload file
+    // Upload new file
     const { error: uploadError } = await supabase.storage
       .from("animal-images")
       .upload(filePath, file);
@@ -68,29 +69,39 @@ function AdminPanel() {
       return;
     }
 
+    // Delete old image if editing
+    if (editingId && oldImagePath) {
+      await supabase.storage.from("animal-images").remove([oldImagePath]);
+    }
+
     // Get public URL
     const { data } = supabase.storage
       .from("animal-images")
       .getPublicUrl(filePath);
 
     setImageUrl(data.publicUrl);
-    setImagePath(filePath); // <-- store path for potential deletion
+    setImagePath(filePath);
+    if (editingId) setOldImagePath(filePath); // Update old image path while editing
     alert("Image uploaded successfully!");
   };
 
-  // Delete uploaded image from storage
+  // Delete image from storage
   const deleteImage = async () => {
-    if (!imagePath) return;
+    // Determine which image to delete
+    const pathToDelete = editingId && oldImagePath ? oldImagePath : imagePath;
+
+    if (!pathToDelete) return;
 
     const { error } = await supabase.storage
       .from("animal-images")
-      .remove([imagePath]); // <-- remove file from bucket
+      .remove([pathToDelete]);
 
     if (error) {
       alert("Error deleting image: " + error.message);
     } else {
-      setImageUrl(""); // <-- clear preview
-      setImagePath(""); // <-- clear storage path
+      setImageUrl("");
+      setImagePath("");
+      if (editingId) setOldImagePath(""); // clear for editing
       alert("Image deleted successfully!");
     }
   };
@@ -125,6 +136,13 @@ function AdminPanel() {
 
   // Delete animal
   const deleteAnimal = async (id: string) => {
+    const animal = animals.find((a) => a.id === id);
+    if (animal?.image_url) {
+      // Extract path from public URL
+      const imagePath = animal.image_url.split("/").pop() || "";
+      await supabase.storage.from("animal-images").remove([imagePath]);
+    }
+
     const { error } = await supabase.from("Gallery").delete().eq("id", id);
     if (error) {
       alert("Error deleting: " + error.message);
@@ -143,7 +161,8 @@ function AdminPanel() {
     setLocation(animal.location);
     setDescription(animal.description);
     setImageUrl(animal.image_url);
-    setImagePath(animal.image_url); // <-- store image path for editing
+    setImagePath(""); // reset new upload
+    setOldImagePath(animal.image_url.split("/").pop() || ""); // store original image path
     setIsUrgent(animal.isUrgent);
   };
 
@@ -184,7 +203,8 @@ function AdminPanel() {
     setLocation("");
     setDescription("");
     setImageUrl("");
-    setImagePath(""); // <-- clear path
+    setImagePath("");
+    setOldImagePath("");
     setIsUrgent(false);
   };
 
@@ -219,13 +239,17 @@ function AdminPanel() {
           onChange={(e) => setAge(Number(e.target.value))}
           className="border p-2 w-full rounded"
         />
-        <input
-          type="text"
-          placeholder="Gender"
+        <select
           value={gender}
-          onChange={(e) => setGender(e.target.value)}
+           onChange={(e) => setGender(e.target.value)}
           className="border p-2 w-full rounded"
-        />
+        >
+          <option value="" disabled>
+          Select Gender
+          </option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
         <input
           type="text"
           placeholder="Breed"
@@ -247,18 +271,22 @@ function AdminPanel() {
           className="border p-2 w-full rounded"
         />
 
-        {/* File Upload */}
         <input
           type="file"
           accept="image/*"
           onChange={uploadImage}
           className="border p-2 w-full rounded"
         />
+
         {imageUrl && (
           <div className="relative">
-            <img src={imageUrl} alt="Uploaded preview" className="h-40 w-full object-cover rounded mt-2" />
+            <img
+              src={imageUrl}
+              alt="Uploaded preview"
+              className="h-40 w-full object-cover rounded mt-2"
+            />
             <button
-              onClick={deleteImage} // <-- Delete uploaded image
+              onClick={deleteImage}
               className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
             >
               Delete Image
