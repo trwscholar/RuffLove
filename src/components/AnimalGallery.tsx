@@ -174,7 +174,7 @@ const AnimalGallery = ({
         <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col">
           
           {/* IMAGE CONTAINER WITH ASPECT RATIO */}
-          <div className="relative w-full overflow-hidden rounded-t-2xl flex-shrink-0 aspect-[4/3]">
+          <div className="relative w-full overflow-hidden rounded-t-2xl flex-shrink-0 aspect-[16/9]">
             <img
               src={animal.image_url}
               alt={`${animal.name} - ${animal.breed}`}
