@@ -25,7 +25,8 @@ function AdminPanel() {
   const [breed, setBreed] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState(""); // Stores public URL
+  const [imagePath, setImagePath] = useState(""); // Stores storage path for deletion
   const [isUrgent, setIsUrgent] = useState(false);
 
   const navigate = useNavigate();
@@ -73,7 +74,25 @@ function AdminPanel() {
       .getPublicUrl(filePath);
 
     setImageUrl(data.publicUrl);
+    setImagePath(filePath); // <-- store path for potential deletion
     alert("Image uploaded successfully!");
+  };
+
+  // Delete uploaded image from storage
+  const deleteImage = async () => {
+    if (!imagePath) return;
+
+    const { error } = await supabase.storage
+      .from("animal-images")
+      .remove([imagePath]); // <-- remove file from bucket
+
+    if (error) {
+      alert("Error deleting image: " + error.message);
+    } else {
+      setImageUrl(""); // <-- clear preview
+      setImagePath(""); // <-- clear storage path
+      alert("Image deleted successfully!");
+    }
   };
 
   // Add new animal
@@ -124,6 +143,7 @@ function AdminPanel() {
     setLocation(animal.location);
     setDescription(animal.description);
     setImageUrl(animal.image_url);
+    setImagePath(animal.image_url); // <-- store image path for editing
     setIsUrgent(animal.isUrgent);
   };
 
@@ -164,6 +184,7 @@ function AdminPanel() {
     setLocation("");
     setDescription("");
     setImageUrl("");
+    setImagePath(""); // <-- clear path
     setIsUrgent(false);
   };
 
@@ -234,7 +255,15 @@ function AdminPanel() {
           className="border p-2 w-full rounded"
         />
         {imageUrl && (
-          <img src={imageUrl} alt="Uploaded preview" className="h-40 w-full object-cover rounded mt-2" />
+          <div className="relative">
+            <img src={imageUrl} alt="Uploaded preview" className="h-40 w-full object-cover rounded mt-2" />
+            <button
+              onClick={deleteImage} // <-- Delete uploaded image
+              className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+            >
+              Delete Image
+            </button>
+          </div>
         )}
 
         <label className="flex items-center space-x-2">
