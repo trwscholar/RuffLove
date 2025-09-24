@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ for routing
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import supabase from "../supabase-client";
 
 interface Animal {
@@ -19,7 +19,6 @@ function AdminPanel() {
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // form state
   const [name, setName] = useState("");
   const [age, setAge] = useState<number | "">("");
   const [gender, setGender] = useState("");
@@ -29,9 +28,9 @@ function AdminPanel() {
   const [imageUrl, setImageUrl] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
 
-  const navigate = useNavigate(); // ✅ for redirect
+  const navigate = useNavigate();
 
-  // fetch animals
+  // Fetch animals
   const fetchAnimals = async () => {
     const { data, error } = await supabase
       .from("Gallery")
@@ -49,7 +48,35 @@ function AdminPanel() {
     fetchAnimals();
   }, []);
 
-  // add new animal
+  // Upload image to Supabase Storage
+  const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+
+    const file = e.target.files[0];
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    // Upload file
+    const { error: uploadError } = await supabase.storage
+      .from("animal-images")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      alert("Error uploading image: " + uploadError.message);
+      return;
+    }
+
+    // Get public URL
+    const { data } = supabase.storage
+      .from("animal-images")
+      .getPublicUrl(filePath);
+
+    setImageUrl(data.publicUrl);
+    alert("Image uploaded successfully!");
+  };
+
+  // Add new animal
   const addAnimal = async () => {
     if (!name || age === "") {
       alert("Name and age are required");
@@ -77,7 +104,7 @@ function AdminPanel() {
     }
   };
 
-  // delete animal
+  // Delete animal
   const deleteAnimal = async (id: string) => {
     const { error } = await supabase.from("Gallery").delete().eq("id", id);
     if (error) {
@@ -87,7 +114,7 @@ function AdminPanel() {
     }
   };
 
-  // start editing
+  // Start editing
   const startEdit = (animal: Animal) => {
     setEditingId(animal.id);
     setName(animal.name);
@@ -100,7 +127,7 @@ function AdminPanel() {
     setIsUrgent(animal.isUrgent);
   };
 
-  // update animal
+  // Update animal
   const updateAnimal = async () => {
     if (!editingId) return;
 
@@ -128,7 +155,6 @@ function AdminPanel() {
     }
   };
 
-  // reset form
   const resetForm = () => {
     setEditingId(null);
     setName("");
@@ -141,19 +167,12 @@ function AdminPanel() {
     setIsUrgent(false);
   };
 
-  // ✅ logout (later connect to supabase.auth.signOut)
   const handleLogout = async () => {
-    try {
-      // placeholder for supabase auth (later you’ll replace with real signOut)
-      // await supabase.auth.signOut();
-      navigate("/"); // ✅ redirect to homepage
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    navigate("/");
   };
 
   return (
-    <section id="admin" className="max-w-7xl mx-auto px-4 py-10">
+    <section className="max-w-7xl mx-auto px-4 py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Admin Panel</h1>
         <button
@@ -164,7 +183,6 @@ function AdminPanel() {
         </button>
       </div>
 
-      {/* Form */}
       <div className="bg-white border rounded-xl p-6 shadow-lg mb-10 max-w-2xl space-y-3">
         <input
           type="text"
@@ -207,13 +225,18 @@ function AdminPanel() {
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 w-full rounded"
         />
+
+        {/* File Upload */}
         <input
-          type="text"
-          placeholder="Image URL"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
+          type="file"
+          accept="image/*"
+          onChange={uploadImage}
           className="border p-2 w-full rounded"
         />
+        {imageUrl && (
+          <img src={imageUrl} alt="Uploaded preview" className="h-40 w-full object-cover rounded mt-2" />
+        )}
+
         <label className="flex items-center space-x-2">
           <input
             type="checkbox"
@@ -248,7 +271,6 @@ function AdminPanel() {
         )}
       </div>
 
-      {/* List */}
       <ul>
         {animals.map((animal) => (
           <li
@@ -283,4 +305,4 @@ function AdminPanel() {
   );
 }
 
-export default AdminPanel;
+export default AdminPanel;

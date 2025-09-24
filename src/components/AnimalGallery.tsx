@@ -13,7 +13,7 @@ interface AnimalGalleryItem {
   gender: string;
   location: string;
   description: string;
-  image: string;
+  image_url: string; // ← use image_url from table
   isUrgent?: boolean;
   isFavorite?: boolean;
 }
@@ -35,7 +35,6 @@ const AnimalGallery = ({
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
-  // Fetch data from Supabase Gallery table
   const fetchGallery = async () => {
     const { data, error } = await supabase
       .from('Gallery')
@@ -55,7 +54,7 @@ const AnimalGallery = ({
       gender: item.gender,
       location: item.location,
       description: item.description,
-      image: item.image_url,
+      image_url: item.image_url, // ← use storage/public URL directly
       isUrgent: item.isUrgent,
       isFavorite: false,
     }));
@@ -69,37 +68,31 @@ const AnimalGallery = ({
 
   useEffect(() => {
     if (!carouselApi) return;
-  
+
     const updateSelection = () => {
       setCanScrollPrev(carouselApi.canScrollPrev());
       setCanScrollNext(carouselApi.canScrollNext());
     };
-  
+
     updateSelection();
     carouselApi.on("select", updateSelection);
-  
-    // Cleanup function
+
     return () => {
       carouselApi.off("select", updateSelection);
     };
   }, [carouselApi]);
-  
 
   const toggleFavorite = (animalId: string) => {
     setFavorites(prev => {
       const newFavorites = new Set(prev);
-      if (newFavorites.has(animalId)) {
-        newFavorites.delete(animalId);
-      } else {
-        newFavorites.add(animalId);
-      }
+      if (newFavorites.has(animalId)) newFavorites.delete(animalId);
+      else newFavorites.add(animalId);
       return newFavorites;
     });
   };
 
   return (
     <section id="adopt" className="py-16 bg-white">
-      {/* Header */}
       <div className="max-w-6xl mx-auto px-4 mb-8 md:mb-14 lg:mb-16 text-center">
         <h2 className="mb-3 text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
           {heading}
@@ -108,7 +101,6 @@ const AnimalGallery = ({
         <div className="flex justify-center mt-4 space-x-2 text-red-500">🐾🐾🐾</div>
       </div>
 
-      {/* Carousel */}
       <div className="relative w-full">
         <Button
           size="icon"
@@ -140,7 +132,7 @@ const AnimalGallery = ({
                 <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col">
                   <div className="relative h-[200px] overflow-hidden rounded-t-2xl flex-shrink-0">
                     <img
-                      src={animal.image}
+                      src={animal.image_url} // ← use storage URL directly
                       alt={`${animal.name} - ${animal.breed}`}
                       className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110"
                     />
@@ -202,15 +194,6 @@ const AnimalGallery = ({
             ))}
           </CarouselContent>
         </Carousel>
-      </div>
-
-      <div className="text-center mt-12">
-        <Button className="group bg-red-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-red-400 hover:scale-105 transition-all duration-300 hover:shadow-pink-200 hover:shadow-xl relative overflow-hidden">
-          <span className="relative z-10">View All Pets</span>
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-            🐾
-          </div>
-        </Button>
       </div>
     </section>
   );
