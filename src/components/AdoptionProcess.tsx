@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, FileText, Users, Home, CheckCircle } from "lucide-react";
+import { Instagram, FileText, Video, CreditCard, MapPin, MessageCircle, CheckCircle } from "lucide-react";
 
 // Utility function for className merging
 function cn(...classes: (string | undefined | null | false)[]): string {
@@ -30,35 +30,51 @@ interface AnimalAdoptionProcessProps {
 const processSteps: ProcessStep[] = [
   {
     id: 1,
-    title: "Choose Your Pet",
-    description: "Browse our adorable animals and find your perfect companion",
-    icon: Heart,
+    title: "Browse Pets",
+    description: "Scroll our Instagram and pick a doggo or catto you like",
+    icon: Instagram,
     color: "text-pink-600",
     bgColor: "bg-pink-100",
   },
   {
     id: 2,
-    title: "Apply",
-    description: "Fill out our simple application form to get started",
+    title: "Apply Form",
+    description: "Fill in our adoption form with details",
     icon: FileText,
     color: "text-blue-600",
     bgColor: "bg-blue-100",
   },
   {
     id: 3,
-    title: "Meet & Greet",
-    description: "Visit our shelter to meet your potential new family member",
-    icon: Users,
+    title: "Home Check",
+    description: "Provide a short video of your home",
+    icon: Video,
     color: "text-green-600",
     bgColor: "bg-green-100",
   },
   {
     id: 4,
-    title: "Bring Home",
-    description: "Welcome your new furry friend to their forever home",
-    icon: Home,
+    title: "Adoption Fee",
+    description: "Pay the non-refundable fee covering care and supplies",
+    icon: CreditCard,
+    color: "text-orange-600",
+    bgColor: "bg-orange-100",
+  },
+  {
+    id: 5,
+    title: "Pick Up",
+    description: "Collect your new furry friend yourself",
+    icon: MapPin,
     color: "text-purple-600",
     bgColor: "bg-purple-100",
+  },
+  {
+    id: 6,
+    title: "Follow-Up",
+    description: "Send updates and keep us informed post-adoption",
+    icon: MessageCircle,
+    color: "text-indigo-600",
+    bgColor: "bg-indigo-100",
   },
 ];
 
@@ -111,7 +127,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className={cn("w-full max-w-6xl mx-auto px-4", className)}>
+      <div className={cn("w-full max-w-7xl mx-auto px-4", className)}>
         {/* Header */}
         <div className="text-center mb-12">
           <motion.div
@@ -123,7 +139,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
               Simple Adoption Process
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Just 4 easy steps to bring your new best friend home
+              Just 6 easy steps to bring your new best friend home
             </p>
             <div className="flex justify-center mt-4">
               <div className="flex space-x-2">
@@ -137,13 +153,13 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
 
         {/* Process Steps */}
         <div className="relative">
-          {/* Connection Lines */}
-          <div className="hidden md:block absolute top-20 left-0 right-0 h-1">
-            <div className="flex items-center justify-between h-full px-16">
+          {/* Connection Lines - Modified for 6 steps */}
+          <div className="hidden lg:block absolute top-20 left-0 right-0 h-1">
+            <div className="flex items-center justify-between h-full px-12">
               {processSteps.slice(0, -1).map((_, index) => (
                 <motion.div
                   key={index}
-                  className="flex-1 h-1 mx-4 rounded-full bg-gray-200"
+                  className="flex-1 h-1 mx-2 rounded-full bg-gray-200"
                   initial={{ scaleX: 0 }}
                   animate={{
                     scaleX: 1,
@@ -158,8 +174,8 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
             </div>
           </div>
 
-          {/* Steps Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Steps Grid - Modified for 6 steps */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
             {processSteps.map((step, index) => {
               const Icon = step.icon;
               const completed = isStepCompleted(step.id);
@@ -176,7 +192,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                 >
                   <motion.div
                     className={cn(
-                      "relative bg-white border-2 rounded-2xl p-6 cursor-pointer transition-all duration-500 ease-out",
+                      "relative bg-white border-2 rounded-2xl p-4 cursor-pointer transition-all duration-500 ease-out",
                       "group overflow-hidden shadow-lg",
                       active && "border-red-500 shadow-xl",
                       completed && "border-green-500",
@@ -225,7 +241,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                           transition={{ duration: 2, repeat: Infinity, delay: 0 }}
                         />
                         <motion.div
-                          className="absolute top-8 left-6 w-1.5 h-1.5 bg-purple-400 rounded-full"
+                          className="absolute top-6 left-4 w-1.5 h-1.5 bg-purple-400 rounded-full"
                           animate={{
                             y: [-5, -25, -5],
                             x: [0, -8, 0],
@@ -234,7 +250,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                           transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
                         />
                         <motion.div
-                          className="absolute bottom-6 right-8 w-1 h-1 bg-blue-400 rounded-full"
+                          className="absolute bottom-4 right-6 w-1 h-1 bg-blue-400 rounded-full"
                           animate={{
                             y: [10, -10, 10],
                             x: [0, 5, 0],
@@ -246,10 +262,10 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                     )}
                     
                     {/* Step Number/Icon Container */}
-                    <div className="flex items-center justify-center mb-4">
+                    <div className="flex items-center justify-center mb-3">
                       <motion.div
                         className={cn(
-                          "relative w-16 h-16 rounded-full flex items-center justify-center",
+                          "relative w-12 h-12 rounded-full flex items-center justify-center",
                           "border-2 transition-all duration-300",
                           completed && "bg-green-500 border-green-500",
                           active && !completed && "bg-red-500 border-red-500",
@@ -270,7 +286,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                               exit={{ scale: 0, rotate: 180 }}
                               transition={{ duration: 0.3 }}
                             >
-                              <CheckCircle className="w-8 h-8 text-white" />
+                              <CheckCircle className="w-6 h-6 text-white" />
                             </motion.div>
                           ) : (
                             <motion.div
@@ -282,7 +298,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                             >
                               <Icon 
                                 className={cn(
-                                  "w-8 h-8",
+                                  "w-6 h-6",
                                   active ? "text-white" : "text-gray-600"
                                 )} 
                               />
@@ -293,7 +309,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                         {/* Cute floating hearts animation */}
                         {(active || hovered) && (
                           <motion.div
-                            className="absolute -top-2 -right-2"
+                            className="absolute -top-1 -right-1"
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ 
                               scale: [0, 1, 0],
@@ -306,7 +322,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                               repeatDelay: 1
                             }}
                           >
-                            <span className="text-pink-500 text-lg">💕</span>
+                            <span className="text-pink-500 text-sm">💕</span>
                           </motion.div>
                         )}
                       </motion.div>
@@ -316,7 +332,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                     <div className="text-center">
                       <motion.h3
                         className={cn(
-                          "text-xl font-bold mb-2 transition-colors duration-300 font-rounded",
+                          "text-lg font-bold mb-2 transition-colors duration-300 font-rounded",
                           active && "text-red-500",
                           completed && "text-green-600",
                           !active && !completed && "text-gray-800"
@@ -327,7 +343,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                         {step.title}
                       </motion.h3>
                       <motion.p
-                        className="text-sm text-gray-600 leading-relaxed"
+                        className="text-xs text-gray-600 leading-relaxed"
                         animate={{ opacity: hovered ? 1 : 0.8 }}
                         transition={{ duration: 0.2 }}
                       >
@@ -343,7 +359,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ duration: 0.3, delay: 0.2 }}
                       >
-                        <span className="text-2xl">🐾</span>
+                        <span className="text-lg">🐾</span>
                       </motion.div>
                     )}
                   </motion.div>
@@ -351,8 +367,8 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
                   {/* Step number badge */}
                   <motion.div
                     className={cn(
-                      "absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center",
-                      "text-sm font-bold border-2 bg-white",
+                      "absolute -top-2 -left-2 w-6 h-6 rounded-full flex items-center justify-center",
+                      "text-xs font-bold border-2 bg-white",
                       completed && "bg-green-500 border-green-500 text-white",
                       active && !completed && "bg-red-500 border-red-500 text-white",
                       !active && !completed && "bg-gray-100 border-gray-200 text-gray-600"
