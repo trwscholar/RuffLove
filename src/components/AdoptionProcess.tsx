@@ -1,121 +1,358 @@
-import React from "react";
-import { Heart, FileText, Home, CreditCard, Car, MessageSquare } from "lucide-react";
+"use client";
 
-const processSteps = [
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, FileText, Users, Home, CheckCircle } from "lucide-react";
+
+// Utility function for className merging
+function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
+
+interface ProcessStep {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  color: string;
+  bgColor: string;
+  completed?: boolean;
+}
+
+interface AnimalAdoptionProcessProps {
+  currentStep?: number;
+  onStepChange?: (step: number) => void;
+  className?: string;
+}
+
+const processSteps: ProcessStep[] = [
   {
     id: 1,
-    title: "Browse Pets",
-    description: "Scroll our Instagram and pick a doggo or catto you like",
+    title: "Choose Your Pet",
+    description: "Browse our adorable animals and find your perfect companion",
     icon: Heart,
+    color: "text-pink-600",
+    bgColor: "bg-pink-100",
   },
   {
     id: 2,
-    title: "Apply Form",
-    description: "Fill in our adoption form with details",
+    title: "Apply",
+    description: "Fill out our simple application form to get started",
     icon: FileText,
+    color: "text-blue-600",
+    bgColor: "bg-blue-100",
   },
   {
     id: 3,
-    title: "Home Check",
-    description: "Provide a short video of your home",
-    icon: Home,
+    title: "Meet & Greet",
+    description: "Visit our shelter to meet your potential new family member",
+    icon: Users,
+    color: "text-green-600",
+    bgColor: "bg-green-100",
   },
   {
     id: 4,
-    title: "Adoption Fee",
-    description: "Pay the non-refundable fee covering care and supplies",
-    icon: CreditCard,
-  },
-  {
-    id: 5,
-    title: "Pick Up",
-    description: "Collect your new furry friend yourself",
-    icon: Car,
-  },
-  {
-    id: 6,
-    title: "Follow-Up",
-    description: "Send updates and keep us informed post-adoption",
-    icon: MessageSquare,
+    title: "Bring Home",
+    description: "Welcome your new furry friend to their forever home",
+    icon: Home,
+    color: "text-purple-600",
+    bgColor: "bg-purple-100",
   },
 ];
 
-const AnimalAdoptionProcess = () => {
+const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
+  currentStep = 1,
+  onStepChange,
+  className,
+}) => {
+  const [activeStep, setActiveStep] = useState(currentStep);
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+
+  useEffect(() => {
+    setActiveStep(currentStep);
+  }, [currentStep]);
+
+  const handleStepClick = (stepId: number) => {
+    setActiveStep(stepId);
+    onStepChange?.(stepId);
+  };
+
+  const isStepCompleted = (stepId: number) => stepId < activeStep;
+  const isStepActive = (stepId: number) => stepId === activeStep;
+
   return (
-    <section className="py-12 bg-pink-50 relative">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-800 mb-2">Simple Adoption Process</h2>
-        <p className="text-lg text-gray-600">Just 6 easy steps to bring your new best friend home</p>
-        <div className="mt-2">🐾🐾🐾</div>
-      </div>
-
-      {/* Zigzag Layout */}
-      <div className="relative w-full max-w-5xl mx-auto">
-        {processSteps.map((step, idx) => {
-          const Icon = step.icon;
-          const isLeft = idx % 2 === 0; // alternate zigzag
-          return (
-            <div
-              key={step.id}
-              className={`flex items-center mb-16 ${isLeft ? "flex-row" : "flex-row-reverse"}`}
-            >
-              {/* Step Card */}
-              <div className="relative bg-white rounded-xl shadow-md p-6 w-80 border border-pink-200">
-                {/* Number Badge */}
-                <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center font-bold shadow">
-                  {step.id}
-                </div>
-
-                {/* Icon */}
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-pink-600" />
-                  </div>
-                </div>
-
-                {/* Content */}
-                <h3 className="text-lg font-bold text-gray-800 mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-600">{step.description}</p>
+    <section className="py-16 bg-pink-50">
+      <div className={cn("w-full max-w-6xl mx-auto px-4", className)}>
+        {/* Header */}
+        <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl font-bold text-gray-800 mb-4 font-rounded">
+              Simple Adoption Process
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Just 4 easy steps to bring your new best friend home
+            </p>
+            <div className="flex justify-center mt-4">
+              <div className="flex space-x-2">
+                <span className="text-red-500">🐾</span>
+                <span className="text-red-500">🐾</span>
+                <span className="text-red-500">🐾</span>
               </div>
-
-              {/* Connector */}
-              {idx < processSteps.length - 1 && (
-                <div className="flex-1 relative h-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="absolute top-1/2 left-0 w-full h-20"
-                    viewBox="0 0 200 100"
-                    preserveAspectRatio="none"
-                  >
-                    {isLeft ? (
-                      <path
-                        d="M 200 10 C 100 100, 100 0, 0 90"
-                        stroke="#f87171"
-                        strokeWidth="2"
-                        fill="transparent"
-                      />
-                    ) : (
-                      <path
-                        d="M 0 10 C 100 100, 100 0, 200 90"
-                        stroke="#f87171"
-                        strokeWidth="2"
-                        fill="transparent"
-                      />
-                    )}
-                  </svg>
-                </div>
-              )}
             </div>
-          );
-        })}
-
-        {/* Button */}
-        <div className="text-center mt-12">
-          <button className="bg-red-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-red-400 transition">
-            Start Adoption Process 🐾
-          </button>
+          </motion.div>
         </div>
+
+        {/* Process Steps */}
+        <div className="relative">
+          {/* Connection Lines */}
+          <div className="hidden md:block absolute top-20 left-0 right-0 h-1">
+            <div className="flex items-center justify-between h-full px-16">
+              {processSteps.slice(0, -1).map((_, index) => (
+                <motion.div
+                  key={index}
+                  className="flex-1 h-1 mx-4 rounded-full bg-gray-200"
+                  initial={{ scaleX: 0 }}
+                  animate={{
+                    scaleX: 1,
+                    backgroundColor: isStepCompleted(index + 2) 
+                      ? "#E53935" 
+                      : "#E5E7EB"
+                  }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  style={{ transformOrigin: "left" }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Steps Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {processSteps.map((step, index) => {
+              const Icon = step.icon;
+              const completed = isStepCompleted(step.id);
+              const active = isStepActive(step.id);
+              const hovered = hoveredStep === step.id;
+
+              return (
+                <motion.div
+                  key={step.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="relative"
+                >
+                  <motion.div
+                    className={cn(
+                      "relative bg-white border-2 rounded-2xl p-6 cursor-pointer transition-all duration-500 ease-out",
+                      "group overflow-hidden shadow-lg",
+                      active && "border-red-500 shadow-xl",
+                      completed && "border-green-500",
+                      !active && !completed && "border-gray-200"
+                    )}
+                    onClick={() => handleStepClick(step.id)}
+                    onMouseEnter={() => setHoveredStep(step.id)}
+                    onMouseLeave={() => setHoveredStep(null)}
+                    whileHover={{ 
+                      scale: 1.05,
+                      rotateY: 15,
+                      rotateX: 5,
+                      z: 50
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{
+                      transformStyle: "preserve-3d",
+                      perspective: 1000
+                    }}
+                  >
+                    {/* 3D Hover Effect Background */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 rounded-2xl opacity-0 group-hover:opacity-100"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    
+                    {/* Floating particles effect */}
+                    {hovered && (
+                      <>
+                        <motion.div
+                          className="absolute top-4 right-4 w-2 h-2 bg-pink-400 rounded-full"
+                          animate={{
+                            y: [-10, -30, -10],
+                            x: [0, 10, 0],
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, delay: 0 }}
+                        />
+                        <motion.div
+                          className="absolute top-8 left-6 w-1.5 h-1.5 bg-purple-400 rounded-full"
+                          animate={{
+                            y: [-5, -25, -5],
+                            x: [0, -8, 0],
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                        />
+                        <motion.div
+                          className="absolute bottom-6 right-8 w-1 h-1 bg-blue-400 rounded-full"
+                          animate={{
+                            y: [10, -10, 10],
+                            x: [0, 5, 0],
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                        />
+                      </>
+                    )}
+                    
+                    {/* Step Number/Icon Container */}
+                    <div className="flex items-center justify-center mb-4">
+                      <motion.div
+                        className={cn(
+                          "relative w-16 h-16 rounded-full flex items-center justify-center",
+                          "border-2 transition-all duration-300",
+                          completed && "bg-green-500 border-green-500",
+                          active && !completed && "bg-red-500 border-red-500",
+                          !active && !completed && "bg-gray-100 border-gray-200"
+                        )}
+                        animate={{
+                          scale: hovered ? 1.1 : 1,
+                          rotate: hovered ? 5 : 0,
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <AnimatePresence mode="wait">
+                          {completed ? (
+                            <motion.div
+                              key="check"
+                              initial={{ scale: 0, rotate: -180 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              exit={{ scale: 0, rotate: 180 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <CheckCircle className="w-8 h-8 text-white" />
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="icon"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              exit={{ scale: 0 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <Icon 
+                                className={cn(
+                                  "w-8 h-8",
+                                  active ? "text-white" : "text-gray-600"
+                                )} 
+                              />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+
+                        {/* Cute floating hearts animation */}
+                        {(active || hovered) && (
+                          <motion.div
+                            className="absolute -top-2 -right-2"
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ 
+                              scale: [0, 1, 0],
+                              opacity: [0, 1, 0],
+                              y: [0, -20, -40]
+                            }}
+                            transition={{ 
+                              duration: 2,
+                              repeat: Infinity,
+                              repeatDelay: 1
+                            }}
+                          >
+                            <span className="text-pink-500 text-lg">💕</span>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    </div>
+
+                    {/* Step Content */}
+                    <div className="text-center">
+                      <motion.h3
+                        className={cn(
+                          "text-xl font-bold mb-2 transition-colors duration-300 font-rounded",
+                          active && "text-red-500",
+                          completed && "text-green-600",
+                          !active && !completed && "text-gray-800"
+                        )}
+                        animate={{ scale: hovered ? 1.05 : 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {step.title}
+                      </motion.h3>
+                      <motion.p
+                        className="text-sm text-gray-600 leading-relaxed"
+                        animate={{ opacity: hovered ? 1 : 0.8 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {step.description}
+                      </motion.p>
+                    </div>
+
+                    {/* Cute paw prints decoration */}
+                    {active && (
+                      <motion.div
+                        className="absolute -bottom-1 -right-1"
+                        initial={{ scale: 0, rotate: -45 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
+                        <span className="text-2xl">🐾</span>
+                      </motion.div>
+                    )}
+                  </motion.div>
+
+                  {/* Step number badge */}
+                  <motion.div
+                    className={cn(
+                      "absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center",
+                      "text-sm font-bold border-2 bg-white",
+                      completed && "bg-green-500 border-green-500 text-white",
+                      active && !completed && "bg-red-500 border-red-500 text-white",
+                      !active && !completed && "bg-gray-100 border-gray-200 text-gray-600"
+                    )}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 + 0.3 }}
+                  >
+                    {step.id}
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
+          <motion.button
+            className={cn(
+              "group bg-red-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-red-400 hover:scale-105 transition-all duration-300 hover:shadow-pink-200 hover:shadow-xl relative overflow-hidden"
+            )}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="relative z-10">Start Adoption Process</span>
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+              🐾
+            </div>
+          </motion.button>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,29 +1,29 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import Navigation from "./components/Navigation";
-import Hero from "./components/Hero";
-import AboutUs from "./components/AboutUs";
-import ServicesStrip from "./components/ServicesStrip";
-import AnimalGallery from "./components/AnimalGallery";
-import AdoptionProcess from "./components/AdoptionProcess";
-import DonationSupport from "./components/DonationSupport";
-import EventsCommunity from "./components/EventsCommunity";
-import Testimonials from "./components/Testimonials";
+import React from 'react';
+import Navigation from './components/Navigation';
+import Hero from './components/Hero';
+import AboutUs from './components/AboutUs';   // 👈 new import
+import ServicesStrip from './components/ServicesStrip';
+import AnimalGallery from './components/AnimalGallery';
+import AdoptionProcess from './components/AdoptionProcess';
+import DonationSupport from './components/DonationSupport';
+import EventsCommunity from './components/EventsCommunity';
+import Testimonials from './components/Testimonials';
 import SocialMedia from "./components/SocialMedia";
-import ContactLocation from "./components/ContactLocation";
-import Footer from "./components/Footer";
-import AdminPanel from "./components/AdminPanel";
+import ContactLocation from './components/ContactLocation';
+import Footer from './components/Footer';
 
-// HomePage composed of all your user-side components
-function HomePage() {
+function App() {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
       <Hero />
-      <AboutUs />
+      <AboutUs />       {/* 👈 inserted right after Hero */}
       <ServicesStrip />
-      <AnimalGallery />
+      <AnimalGallery 
+        heading="Adopt a Friend"
+        description="Browse adorable pets looking for homes."
+        adoptionUrl="/adopt"
+      />
       <AdoptionProcess />
       <DonationSupport />
       <EventsCommunity />
@@ -35,18 +35,4 @@ function HomePage() {
   );
 }
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        {/* Homepage */}
-        <Route path="/" element={<HomePage />} />
-
-        {/* Admin Panel Page */}
-        <Route path="/admin" element={<AdminPanel />} />
-      </Routes>
-    </Router>
-  );
-}
-
-export default App;
+export default App;
