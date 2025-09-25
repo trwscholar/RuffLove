@@ -14,7 +14,7 @@ const AboutUs = () => {
             </h4>
 
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-snug">
-              Who We Are at <span className="text-red-600">Ruff Love Malaysia</span>
+              Who We Are At <span className="text-red-600">Ruff Love Malaysia</span>
             </h2>
 
             <p className="text-lg text-gray-700 leading-relaxed">
