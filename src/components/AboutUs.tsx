@@ -1,64 +1,52 @@
-import React from "react";
-import aboutImg from "../assets/about-placeholder.png"; // use your actual image
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../../utils/cn";
 
-const AboutUs = () => {
-  return (
-    <section id="about" className="relative py-20 bg-red-50 overflow-hidden">
-      {/* Main content container */}
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* LEFT: Text */}
-          <div className="lg:col-span-5 space-y-6 relative z-10">
-            <h4 className="text-sm font-semibold text-red-600 uppercase tracking-wider">
-              About Us
-            </h4>
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-red-500 text-white hover:bg-red-400",
+        destructive: "bg-red-600 text-white hover:bg-red-700",
+        outline: "border border-gray-300 bg-white hover:bg-gray-50 hover:text-gray-900",
+        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+        ghost: "hover:bg-gray-100 hover:text-gray-900",
+        link: "text-red-500 underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+);
 
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-snug">
-              Who We Are at <span className="text-red-600">Ruff Love Malaysia</span>
-            </h2>
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
 
-            <p className="text-lg text-gray-700 leading-relaxed">
-              At Ruff Love Malaysia, we believe that rescuing, rehabilitating, and
-              rehoming animals is more than just a mission — it’s a promise. Every
-              adoption not only saves a life, but it also opens up space for us to
-              help another animal in need.
-            </p>
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
+);
+Button.displayName = "Button";
 
-            <p className="text-lg text-gray-700 leading-relaxed">
-              With the dedication of our volunteers and the support of the
-              community, we continue to build a future where every pet has a safe
-              and loving home. Together, we make a difference, one paw at a time.
-            </p>
-
-            <button className="mt-6 inline-flex items-center justify-center rounded-full bg-[#E53935] px-6 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-red-500 active:scale-95">
-              Learn More
-            </button>
-          </div>
-
-          {/* RIGHT: Image (mobile/tablet only) */}
-          <div className="lg:col-span-7 lg:hidden relative">
-            <img
-              src={aboutImg}
-              alt="About Ruff Love"
-              className="w-full h-[340px] sm:h-[420px] object-cover rounded-2xl shadow-lg"
-            />
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-red-50 via-red-50/80 to-transparent rounded-2xl" />
-          </div>
-        </div>
-      </div>
-
-      {/* RIGHT: Image (desktop only) */}
-      <div className="hidden lg:block absolute inset-y-0 right-0 w-[50vw]">
-        <img
-          src={aboutImg}
-          alt="About Ruff Love"
-          className="w-full h-full object-cover"
-        />
-        {/* Softer edge fade (reduced from w-64 to w-32) */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-red-50 via-red-50/80 to-transparent" />
-      </div>
-    </section>
-  );
-};
-
-export default AboutUs;
+export { Button, buttonVariants };
