@@ -108,16 +108,6 @@ const ContactLocation = () => {
                 </button>
               </div>
             </div>
-            
-            {/* Map Placeholder */}
-            <div className="bg-gray-200 rounded-2xl h-64 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-pink-100"></div>
-              <div className="relative z-10 text-center">
-                <MapPin className="w-16 h-16 text-red-500 mx-auto mb-2" />
-                <p className="text-gray-600">Interactive Map</p>
-                <p className="text-sm text-gray-500">Click to view location</p>
-              </div>
-            </div>
           </div>
           
           {/* Contact Form */}

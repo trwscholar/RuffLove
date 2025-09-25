@@ -418,7 +418,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="relative z-10">Start Adoption Process</span>
+            <span className="relative z-10">Start Adopting Today!</span>
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full group-hover:translate-y-0 transition-transform duration-300">
               🐾
             </div>
