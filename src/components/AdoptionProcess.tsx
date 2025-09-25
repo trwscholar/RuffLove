@@ -144,7 +144,7 @@ const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl font-bold text-gray-800 mb-4 font-rounded">
-              Simple Adoption Process
+              Simple Adoption ES
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Just 6 easy steps to bring your new best friend home
