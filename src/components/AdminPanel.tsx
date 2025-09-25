@@ -1,365 +1,416 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import supabase from "../supabase-client";
+"use client";
 
-interface Animal {
-  id: string;
-  created_at: string;
-  name: string;
-  age: number;
-  gender: string;
-  breed: string;
-  location: string;
-  description: string;
-  image_url: string;
-  isUrgent: boolean;
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, FileText, Users, Home, CheckCircle } from "lucide-react";
+
+// Utility function for className merging
+function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ');
 }
 
-function AdminPanel() {
-  const [animals, setAnimals] = useState<Animal[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
+interface ProcessStep {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  color: string;
+  bgColor: string;
+  completed?: boolean;
+}
 
-  const [name, setName] = useState("");
-  const [age, setAge] = useState<number | "">("");
-  const [gender, setGender] = useState("");
-  const [breed, setBreed] = useState("");
-  const [location, setLocation] = useState("");
-  const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState(""); // Public URL for preview
-  const [imagePath, setImagePath] = useState(""); // Storage path for deletion
-  const [oldImagePath, setOldImagePath] = useState(""); // Original image path for editing
-  const [isUrgent, setIsUrgent] = useState(false);
+interface AnimalAdoptionProcessProps {
+  currentStep?: number;
+  onStepChange?: (step: number) => void;
+  className?: string;
+  autoAdvance?: boolean;
+  autoAdvanceInterval?: number;
+}
 
-  const navigate = useNavigate();
+const processSteps: ProcessStep[] = [
+  {
+    id: 1,
+    title: "Choose Your Pet",
+    description: "Browse our adorable animals and find your perfect companion",
+    icon: Heart,
+    color: "text-pink-600",
+    bgColor: "bg-pink-100",
+  },
+  {
+    id: 2,
+    title: "Apply",
+    description: "Fill out our simple application form to get started",
+    icon: FileText,
+    color: "text-blue-600",
+    bgColor: "bg-blue-100",
+  },
+  {
+    id: 3,
+    title: "Meet & Greet",
+    description: "Visit our shelter to meet your potential new family member",
+    icon: Users,
+    color: "text-green-600",
+    bgColor: "bg-green-100",
+  },
+  {
+    id: 4,
+    title: "Bring Home",
+    description: "Welcome your new furry friend to their forever home",
+    icon: Home,
+    color: "text-purple-600",
+    bgColor: "bg-purple-100",
+  },
+];
 
-  // Fetch animals
-  const fetchAnimals = async () => {
-    const { data, error } = await supabase
-      .from("Gallery")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Fetch error:", error);
-    } else {
-      setAnimals(data || []);
-    }
-  };
+const AnimalAdoptionProcess: React.FC<AnimalAdoptionProcessProps> = ({
+  currentStep = 1,
+  onStepChange,
+  className,
+  autoAdvance = true,
+  autoAdvanceInterval = 2000,
+}) => {
+  const [activeStep, setActiveStep] = useState(currentStep);
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    fetchAnimals();
-  }, []);
+    setActiveStep(currentStep);
+  }, [currentStep]);
 
-  // Upload image to Supabase Storage
-  const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+  // Auto-advance timer
+  useEffect(() => {
+    if (!autoAdvance || isPaused) return;
 
-    const file = e.target.files[0];
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-    const filePath = `${fileName}`;
+    const timer = setInterval(() => {
+      setActiveStep(prev => {
+        const nextStep = prev >= processSteps.length ? 1 : prev + 1;
+        onStepChange?.(nextStep);
+        return nextStep;
+      });
+    }, autoAdvanceInterval);
 
-    // Upload new file
-    const { error: uploadError } = await supabase.storage
-      .from("animal-images")
-      .upload(filePath, file);
-
-    if (uploadError) {
-      alert("Error uploading image: " + uploadError.message);
-      return;
-    }
-
-    // Delete old image if editing
-    if (editingId && oldImagePath) {
-      await supabase.storage.from("animal-images").remove([oldImagePath]);
-    }
-
-    // Get public URL
-    const { data } = supabase.storage
-      .from("animal-images")
-      .getPublicUrl(filePath);
-
-    setImageUrl(data.publicUrl);
-    setImagePath(filePath);
-    if (editingId) setOldImagePath(filePath); // Update old image path while editing
-    alert("Image uploaded successfully!");
+    return () => clearInterval(timer);
+  }, [autoAdvance, autoAdvanceInterval, isPaused, onStepChange]);
+  const handleStepClick = (stepId: number) => {
+    setIsPaused(true);
+    setActiveStep(stepId);
+    onStepChange?.(stepId);
+    
+    // Resume auto-advance after a delay
+    setTimeout(() => {
+      setIsPaused(false);
+    }, autoAdvanceInterval * 1.5);
   };
 
-  // Delete image from storage
-  const deleteImage = async () => {
-    // Determine which image to delete
-    const pathToDelete = editingId && oldImagePath ? oldImagePath : imagePath;
-
-    if (!pathToDelete) return;
-
-    const { error } = await supabase.storage
-      .from("animal-images")
-      .remove([pathToDelete]);
-
-    if (error) {
-      alert("Error deleting image: " + error.message);
-    } else {
-      setImageUrl("");
-      setImagePath("");
-      if (editingId) setOldImagePath(""); // clear for editing
-      alert("Image deleted successfully!");
-    }
-  };
-
-  // Add new animal
-  const addAnimal = async () => {
-    if (!name || age === "") {
-      alert("Name and age are required");
-      return;
-    }
-
-    const newAnimal = {
-      name,
-      age: Number(age),
-      gender,
-      breed,
-      location,
-      description,
-      image_url: imageUrl,
-      isUrgent,
-    };
-
-    const { error } = await supabase.from("Gallery").insert([newAnimal]);
-
-    if (error) {
-      alert("Error adding animal: " + error.message);
-    } else {
-      resetForm();
-      fetchAnimals();
-    }
-  };
-
-  // Delete animal
-  const deleteAnimal = async (id: string) => {
-    const animal = animals.find((a) => a.id === id);
-    if (animal?.image_url) {
-      // Extract path from public URL
-      const imagePath = animal.image_url.split("/").pop() || "";
-      await supabase.storage.from("animal-images").remove([imagePath]);
-    }
-
-    const { error } = await supabase.from("Gallery").delete().eq("id", id);
-    if (error) {
-      alert("Error deleting: " + error.message);
-    } else {
-      fetchAnimals();
-    }
-  };
-
-  // Start editing
-  const startEdit = (animal: Animal) => {
-    setEditingId(animal.id);
-    setName(animal.name);
-    setAge(animal.age);
-    setGender(animal.gender);
-    setBreed(animal.breed);
-    setLocation(animal.location);
-    setDescription(animal.description);
-    setImageUrl(animal.image_url);
-    setImagePath(""); // reset new upload
-    setOldImagePath(animal.image_url.split("/").pop() || ""); // store original image path
-    setIsUrgent(animal.isUrgent);
-  };
-
-  // Update animal
-  const updateAnimal = async () => {
-    if (!editingId) return;
-
-    const updatedAnimal = {
-      name,
-      age: Number(age),
-      gender,
-      breed,
-      location,
-      description,
-      image_url: imageUrl,
-      isUrgent,
-    };
-
-    const { error } = await supabase
-      .from("Gallery")
-      .update(updatedAnimal)
-      .eq("id", editingId);
-
-    if (error) {
-      alert("Error updating animal: " + error.message);
-    } else {
-      resetForm();
-      fetchAnimals();
-    }
-  };
-
-  const resetForm = () => {
-    setEditingId(null);
-    setName("");
-    setAge("");
-    setGender("");
-    setBreed("");
-    setLocation("");
-    setDescription("");
-    setImageUrl("");
-    setImagePath("");
-    setOldImagePath("");
-    setIsUrgent(false);
-  };
-
-  const handleLogout = async () => {
-    navigate("/");
-  };
+  const isStepCompleted = (stepId: number) => stepId < activeStep;
+  const isStepActive = (stepId: number) => stepId === activeStep;
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-10">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Admin Panel</h1>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
-      </div>
-
-      <div className="bg-white border rounded-xl p-6 shadow-lg mb-10 max-w-2xl space-y-3">
-        <input
-          type="text"
-          placeholder="Animal Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
-        <input
-          type="number"
-          placeholder="Age"
-          value={age}
-          onChange={(e) => setAge(Number(e.target.value))}
-          className="border p-2 w-full rounded"
-        />
-        <select
-          value={gender}
-           onChange={(e) => setGender(e.target.value)}
-          className="border p-2 w-full rounded"
-        >
-          <option value="" disabled>
-          Select Gender
-          </option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-        <input
-          type="text"
-          placeholder="Breed"
-          value={breed}
-          onChange={(e) => setBreed(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
-        <input
-          type="text"
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
-
-        <input
-          type="file"
-          accept="image/*"
-          onChange={uploadImage}
-          className="border p-2 w-full rounded"
-        />
-
-        {imageUrl && (
-          <div className="relative">
-            <img
-              src={imageUrl}
-              alt="Uploaded preview"
-              className="h-40 w-full object-cover rounded mt-2"
-            />
-            <button
-              onClick={deleteImage}
-              className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-            >
-              Delete Image
-            </button>
-          </div>
-        )}
-
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={isUrgent}
-            onChange={(e) => setIsUrgent(e.target.checked)}
-          />
-          <span>Urgent</span>
-        </label>
-
-        {editingId ? (
-          <div className="space-x-2">
-            <button
-              onClick={updateAnimal}
-              className="bg-green-500 text-white px-4 py-2 rounded"
-            >
-              Update Animal
-            </button>
-            <button
-              onClick={resetForm}
-              className="bg-gray-400 text-white px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={addAnimal}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+    <section 
+      className="py-16 bg-pink-50"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className={cn("w-full max-w-6xl mx-auto px-4", className)}>
+        {/* Header */}
+        <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            Add Animal
-          </button>
-        )}
-      </div>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4 font-rounded">
+              Simple Adoption Process
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Just 4 easy steps to bring your new best friend home
+            </p>
+            <div className="flex justify-center mt-4">
+              <div className="flex space-x-2">
+                <span className="text-red-500">🐾</span>
+                <span className="text-red-500">🐾</span>
+                <span className="text-red-500">🐾</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
 
-      <ul>
-        {animals.map((animal) => (
-          <li
-            key={animal.id}
-            className="border p-3 mb-2 rounded flex justify-between items-center"
-          >
-            <div>
-              <strong>{animal.name}</strong> ({animal.age}y, {animal.gender}) —{" "}
-              {animal.breed}, {animal.location}{" "}
-              {animal.isUrgent && (
-                <span className="text-red-600 font-bold ml-2">URGENT</span>
+        {/* Process Steps */}
+        <div className="relative">
+          {/* Connection Lines */}
+          <div className="hidden md:block absolute top-20 left-0 right-0 h-1">
+            <div className="flex items-center justify-between h-full px-16">
+              {processSteps.slice(0, -1).map((_, index) => (
+                <motion.div
+                  key={index}
+                  className="flex-1 h-1 mx-4 rounded-full bg-gray-200"
+                  initial={{ scaleX: 0 }}
+                  animate={{
+                    scaleX: 1,
+                    backgroundColor: activeStep > index + 1
+                      ? "#E53935" 
+                      : "#E5E7EB"
+                  }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                  style={{ transformOrigin: "left" }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Steps Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {processSteps.map((step, index) => {
+              const Icon = step.icon;
+              const completed = isStepCompleted(step.id);
+              const active = isStepActive(step.id);
+              const hovered = hoveredStep === step.id;
+
+              return (
+                <motion.div
+                  key={step.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="relative"
+                >
+                  <motion.div
+                    className={cn(
+                      "relative bg-white border-2 rounded-2xl p-6 cursor-pointer transition-all duration-500 ease-out",
+                      "group overflow-hidden shadow-lg",
+                      active && "border-red-500 shadow-xl",
+                      completed && "border-green-500",
+                      !active && !completed && "border-gray-200"
+                    )}
+                    onClick={() => handleStepClick(step.id)}
+                    onMouseEnter={() => setHoveredStep(step.id)}
+                    onMouseLeave={() => setHoveredStep(null)}
+                    whileHover={{ 
+                      scale: 1.05,
+                      rotateY: 15,
+                      rotateX: 5,
+                      z: 50
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{
+                      transformStyle: "preserve-3d",
+                      perspective: 1000
+                    }}
+                    animate={{
+                      scale: active ? 1.02 : 1,
+                      boxShadow: active 
+                        ? "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                        : "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {/* 3D Hover Effect Background */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 rounded-2xl opacity-0 group-hover:opacity-100"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    
+                    {/* Floating particles effect */}
+                    {hovered && (
+                      <>
+                        <motion.div
+                          className="absolute top-4 right-4 w-2 h-2 bg-pink-400 rounded-full"
+                          animate={{
+                            y: [-10, -30, -10],
+                            x: [0, 10, 0],
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, delay: 0 }}
+                        />
+                        <motion.div
+                          className="absolute top-8 left-6 w-1.5 h-1.5 bg-purple-400 rounded-full"
+                          animate={{
+                            y: [-5, -25, -5],
+                            x: [0, -8, 0],
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                        />
+                        <motion.div
+                          className="absolute bottom-6 right-8 w-1 h-1 bg-blue-400 rounded-full"
+                          animate={{
+                            y: [10, -10, 10],
+                            x: [0, 5, 0],
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                        />
+                      </>
+                    )}
+                    
+                    {/* Step Number/Icon Container */}
+                    <div className="flex items-center justify-center mb-4">
+                      <motion.div
+                        className={cn(
+                          "relative w-16 h-16 rounded-full flex items-center justify-center",
+                          "border-2 transition-all duration-300",
+                          completed && "bg-green-500 border-green-500",
+                          active && !completed && "bg-red-500 border-red-500",
+                          !active && !completed && "bg-gray-100 border-gray-200"
+                        )}
+                        animate={{
+                          scale: hovered ? 1.1 : 1,
+                          rotate: hovered ? 5 : 0,
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <AnimatePresence mode="wait">
+                          {completed ? (
+                            <motion.div
+                              key="check"
+                              initial={{ scale: 0, rotate: -180 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              exit={{ scale: 0, rotate: 180 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <CheckCircle className="w-8 h-8 text-white" />
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="icon"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              exit={{ scale: 0 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <Icon 
+                                className={cn(
+                                  "w-8 h-8",
+                                  active ? "text-white" : "text-gray-600"
+                                )} 
+                              />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+
+                        {/* Cute floating hearts animation */}
+                        {(active || hovered) && (
+                          <motion.div
+                            className="absolute -top-2 -right-2"
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ 
+                              scale: [0, 1, 0],
+                              opacity: [0, 1, 0],
+                              y: [0, -20, -40]
+                            }}
+                            transition={{ 
+                              duration: 2,
+                              repeat: Infinity,
+                              repeatDelay: 1
+                            }}
+                          >
+                            <span className="text-pink-500 text-lg">💕</span>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    </div>
+
+                    {/* Step Content */}
+                    <div className="text-center">
+                      <motion.h3
+                        className={cn(
+                          "text-xl font-bold mb-2 transition-colors duration-300 font-rounded",
+                          active && "text-red-500",
+                          completed && "text-green-600",
+                          !active && !completed && "text-gray-800"
+                        )}
+                        animate={{ scale: hovered ? 1.05 : 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {step.title}
+                      </motion.h3>
+                      <motion.p
+                        className="text-sm text-gray-600 leading-relaxed"
+                        animate={{ opacity: hovered ? 1 : 0.8 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {step.description}
+                      </motion.p>
+                    </div>
+
+                    {/* Cute paw prints decoration */}
+                    {active && (
+                      <motion.div
+                        className="absolute -bottom-1 -right-1"
+                        initial={{ scale: 0, rotate: -45 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
+                        <span className="text-2xl">🐾</span>
+                      </motion.div>
+                    )}
+                  </motion.div>
+
+                  {/* Step number badge */}
+                  <motion.div
+                    className={cn(
+                      "absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center",
+                      "text-sm font-bold border-2 bg-white",
+                      completed && "bg-green-500 border-green-500 text-white",
+                      active && !completed && "bg-red-500 border-red-500 text-white",
+                      !active && !completed && "bg-gray-100 border-gray-200 text-gray-600"
+                    )}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 + 0.3 }}
+                  >
+                    {step.id}
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Progress Indicator */}
+        <div className="flex justify-center mt-8 space-x-2">
+          {processSteps.map((_, index) => (
+            <motion.div
+              key={index}
+              className={cn(
+                "w-2 h-2 rounded-full cursor-pointer",
+                activeStep === index + 1 ? "bg-red-500" : "bg-gray-300"
               )}
+              onClick={() => handleStepClick(index + 1)}
+              animate={{
+                scale: activeStep === index + 1 ? 1.2 : 1,
+                backgroundColor: activeStep === index + 1 ? "#E53935" : "#D1D5DB"
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          ))}
+        </div>
+
+        {/* Call to Action */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
+          <motion.button
+            className={cn(
+              "group bg-red-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-red-400 hover:scale-105 transition-all duration-300 hover:shadow-pink-200 hover:shadow-xl relative overflow-hidden"
+            )}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="relative z-10">Start Adoption Process</span>
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+              🐾
             </div>
-            <div className="space-x-2">
-              <button
-                onClick={() => startEdit(animal)}
-                className="bg-yellow-500 text-white px-3 py-1 rounded"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => deleteAnimal(animal.id)}
-                className="bg-red-500 text-white px-3 py-1 rounded"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+          </motion.button>
+        </motion.div>
+      </div>
     </section>
   );
-}
+};
 
-export default AdminPanel;
+export default AnimalAdoptionProcess;
