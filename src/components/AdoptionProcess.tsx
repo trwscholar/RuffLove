@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, FileText, Home, CreditCard, Car, MessageSquare, CheckCircle } from "lucide-react";
 
-// Utility function for className merging
 function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(" ");
 }
@@ -24,7 +23,7 @@ const processSteps: ProcessStep[] = [
 ];
 
 const AnimalAdoptionProcess: React.FC = () => {
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep] = useState(1);
 
   const isStepCompleted = (id: number) => id < activeStep;
   const isStepActive = (id: number) => id === activeStep;
@@ -45,81 +44,101 @@ const AnimalAdoptionProcess: React.FC = () => {
           </div>
         </div>
 
-        {/* Zigzag grid for desktop */}
-        <div className="hidden lg:grid grid-cols-2 gap-y-16 gap-x-24 relative">
+        {/* Zigzag grid */}
+        <div className="hidden lg:grid grid-cols-2 gap-y-20 gap-x-16 relative">
           {processSteps.map((step, index) => {
             const Icon = step.icon;
             const completed = isStepCompleted(step.id);
             const active = isStepActive(step.id);
 
             return (
-              <motion.div
-                key={step.id}
-                className={cn(
-                  "relative bg-white border-2 rounded-2xl p-6 shadow-lg w-80",
-                  active && "border-red-500 shadow-xl ring-4 ring-red-100",
-                  completed && "border-green-500 ring-4 ring-green-100",
-                  !active && !completed && "border-pink-200"
-                )}
-              >
-                {/* Number Badge */}
-                <div
+              <div key={step.id} className="relative">
+                <motion.div
                   className={cn(
-                    "absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 bg-white shadow-md",
-                    completed && "bg-green-500 border-green-500 text-white",
-                    active && "bg-red-500 border-red-500 text-white",
-                    !active && !completed && "bg-pink-100 border-pink-200 text-pink-600"
+                    "relative bg-white border-2 rounded-2xl p-6 shadow-lg w-80 mx-auto",
+                    active && "border-red-500 shadow-xl ring-4 ring-red-100",
+                    completed && "border-green-500 ring-4 ring-green-100",
+                    !active && !completed && "border-pink-200"
                   )}
                 >
-                  {step.id}
-                </div>
-
-                {/* Icon */}
-                <div
-                  className={cn(
-                    "w-16 h-16 rounded-full flex items-center justify-center mb-4",
-                    completed && "bg-green-500",
-                    active && "bg-red-500",
-                    !active && !completed && "bg-pink-100"
-                  )}
-                >
-                  {completed ? (
-                    <CheckCircle className="w-8 h-8 text-white" />
-                  ) : (
-                    <Icon className={cn("w-8 h-8", active ? "text-white" : "text-pink-600")} />
-                  )}
-                </div>
-
-                {/* Text */}
-                <h3
-                  className={cn(
-                    "text-lg font-bold mb-2 font-rounded",
-                    active && "text-red-600",
-                    completed && "text-green-600",
-                    !active && !completed && "text-gray-800"
-                  )}
-                >
-                  {step.title}
-                </h3>
-                <p className="text-sm text-gray-600">{step.description}</p>
-
-                {/* Draw connector line */}
-                {index < processSteps.length - 1 && (
+                  {/* Number Badge */}
                   <div
                     className={cn(
-                      "absolute h-px bg-red-300",
-                      index % 2 === 0
-                        ? "right-[-96px] top-1/2 w-24" // line to next card on right
-                        : "left-[-96px] top-1/2 w-24" // line back to left
+                      "absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 bg-white shadow-md",
+                      completed && "bg-green-500 border-green-500 text-white",
+                      active && "bg-red-500 border-red-500 text-white",
+                      !active && !completed && "bg-pink-100 border-pink-200 text-pink-600"
                     )}
-                  />
+                  >
+                    {step.id}
+                  </div>
+
+                  {/* Icon */}
+                  <div
+                    className={cn(
+                      "w-16 h-16 rounded-full flex items-center justify-center mb-4",
+                      completed && "bg-green-500",
+                      active && "bg-red-500",
+                      !active && !completed && "bg-pink-100"
+                    )}
+                  >
+                    {completed ? (
+                      <CheckCircle className="w-8 h-8 text-white" />
+                    ) : (
+                      <Icon className={cn("w-8 h-8", active ? "text-white" : "text-pink-600")} />
+                    )}
+                  </div>
+
+                  {/* Text */}
+                  <h3
+                    className={cn(
+                      "text-lg font-bold mb-2 font-rounded",
+                      active && "text-red-600",
+                      completed && "text-green-600",
+                      !active && !completed && "text-gray-800"
+                    )}
+                  >
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-gray-600">{step.description}</p>
+                </motion.div>
+
+                {/* Connector Line */}
+                {index < processSteps.length - 1 && (
+                  <svg
+                    className="absolute top-1/2"
+                    style={{
+                      left: index % 2 === 0 ? "100%" : "-40%",
+                      width: "40%",
+                      height: "80px",
+                    }}
+                  >
+                    <path
+                      d={
+                        index % 2 === 0
+                          ? "M0,0 C50,0 50,80 100,80" // curve from left to right
+                          : "M100,0 C50,0 50,80 0,80" // curve from right to left
+                      }
+                      stroke="#f87171"
+                      strokeWidth="2.5"
+                      fill="transparent"
+                    />
+                    <text
+                      x={index % 2 === 0 ? "95%" : "5%"}
+                      y="50%"
+                      textAnchor="middle"
+                      className="text-red-500 text-sm"
+                    >
+                      🐾
+                    </text>
+                  </svg>
                 )}
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
-        {/* Mobile vertical stack */}
+        {/* Mobile stack */}
         <div className="lg:hidden space-y-6 mb-12">
           {processSteps.map((step) => {
             const Icon = step.icon;
@@ -136,7 +155,6 @@ const AnimalAdoptionProcess: React.FC = () => {
                   !active && !completed && "border-pink-200"
                 )}
               >
-                {/* Number */}
                 <div
                   className={cn(
                     "absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 bg-white shadow-md",
