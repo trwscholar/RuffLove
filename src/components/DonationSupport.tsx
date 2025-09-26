@@ -11,26 +11,22 @@ const useCounterAnimation = (endValue: number, duration: number = 2000, isVisibl
 
     setHasAnimated(true);
     let startTime: number | null = null;
-    let animationFrame: number;
 
     const animate = (currentTime: number) => {
       if (startTime === null) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / duration, 1);
 
-      // Easing function for smooth animation
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
       const currentCount = Math.floor(easeOutQuart * endValue);
 
       setCount(currentCount);
 
       if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
       }
     };
 
-    animationFrame = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animationFrame);
+    requestAnimationFrame(animate);
   }, [endValue, duration, isVisible, hasAnimated]);
 
   return count;
@@ -46,10 +42,9 @@ const useIntersectionObserver = (threshold: number = 0.3) => {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target); // stop observing once triggered
         }
       },
-      { threshold, rootMargin: '0px' }
+      { threshold }
     );
 
     if (ref.current) {
@@ -62,7 +57,7 @@ const useIntersectionObserver = (threshold: number = 0.3) => {
     };
   }, [threshold]);
 
-  return [ref, isVisible] as const;
+  return { ref, isVisible };
 };
 
 // Animated cost component
@@ -82,7 +77,7 @@ const AnimatedCost: React.FC<{ cost: string; isVisible: boolean }> = ({ cost, is
 };
 
 const DonationSupport = () => {
-  const [sectionRef, isVisible] = useIntersectionObserver(0.3);
+  const { ref: sectionRef, isVisible } = useIntersectionObserver(0.3);
 
   const expenses = [
     { icon: Stethoscope, label: 'Veterinary Care Bills', cost: 'RM 2,500', color: 'text-blue-500' },
@@ -96,15 +91,6 @@ const DonationSupport = () => {
 
   return (
     <section ref={sectionRef} id="donate" className="py-16 bg-pink-50 relative overflow-hidden">
-      {/* Paw Print Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 text-red-300 text-4xl">🐾</div>
-        <div className="absolute top-32 right-20 text-red-300 text-3xl">🐾</div>
-        <div className="absolute bottom-20 left-32 text-red-300 text-3xl">🐾</div>
-        <div className="absolute bottom-40 right-10 text-red-300 text-4xl">🐾</div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-red-300 text-2xl">🐾</div>
-      </div>
-      
       <div className="max-w-6xl mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-red-500 mb-4 font-rounded">
@@ -113,16 +99,7 @@ const DonationSupport = () => {
           <p className="text-xl text-gray-700 mb-2">
             Your donation directly supports our furry friends
           </p>
-          <p className="text-lg text-gray-600">
-            Monthly expenses breakdown:
-          </p>
-          <div className="flex justify-center mt-4">
-            <div className="flex space-x-2">
-              <span className="text-red-500">❤️</span>
-              <span className="text-red-500">❤️</span>
-              <span className="text-red-500">❤️</span>
-            </div>
-          </div>
+          <p className="text-lg text-gray-600">Monthly expenses breakdown:</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -145,7 +122,7 @@ const DonationSupport = () => {
               </div>
             </div>
           ))}
-          
+
           {/* Total Card */}
           <div className="bg-red-500 rounded-2xl p-6 shadow-lg text-white lg:col-span-3 md:col-span-2">
             <div className="text-center">
@@ -156,28 +133,6 @@ const DonationSupport = () => {
               <p className="opacity-90">Help us reach our goal to provide the best care</p>
             </div>
           </div>
-        </div>
-
-        <div className="text-center space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="group bg-red-500 text-white px-8 py-4 rounded-full font-bold text-xl shadow-lg hover:bg-red-400 hover:scale-105 transition-all duration-300 hover:shadow-pink-200 hover:shadow-xl relative overflow-hidden">
-              <span className="relative z-10">Donate Now</span>
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                🐾
-              </div>
-            </button>
-            
-            <button className="group border-2 border-red-500 text-red-500 px-8 py-4 rounded-full font-bold text-xl hover:bg-red-500 hover:text-white hover:scale-105 transition-all duration-300 relative overflow-hidden">
-              <span className="relative z-10">Sponsor a Pet</span>
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                ❤️
-              </div>
-            </button>
-          </div>
-          
-          <p className="text-gray-600 text-sm">
-            Every ringgit counts • Tax receipts available • 100% goes to animal care
-          </p>
         </div>
       </div>
     </section>
