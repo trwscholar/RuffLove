@@ -1,7 +1,91 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Stethoscope, Home, UtensilsCrossed, Shield, Heart } from 'lucide-react';
 
+// Counter animation hook
+const useCounterAnimation = (endValue: number, duration: number = 2000, isVisible: boolean = false) => {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    if (!isVisible || hasAnimated) return;
+
+    setHasAnimated(true);
+    let startTime: number;
+    let animationFrame: number;
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.floor(easeOutQuart * endValue);
+      
+      setCount(currentCount);
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [endValue, duration, isVisible, hasAnimated]);
+
+  return count;
+};
+
+// Intersection Observer hook
+const useIntersectionObserver = (threshold: number = 0.3) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold, rootMargin: '50px' }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return [ref, isVisible] as const;
+};
+
+// Animated cost component
+const AnimatedCost: React.FC<{ cost: string; isVisible: boolean }> = ({ cost, isVisible }) => {
+  // Extract number from cost string (e.g., "RM 2,500" -> 2500)
+  const numericValue = parseInt(cost.replace(/[^\d]/g, ''));
+  const animatedValue = useCounterAnimation(numericValue, 2000, isVisible);
+  
+  // Format the animated value back to currency format
+  const formatCurrency = (value: number) => {
+    return `RM ${value.toLocaleString()}`;
+  };
+
+  return (
+    <span className="text-2xl font-bold text-red-500 tabular-nums">
+      {formatCurrency(animatedValue)}
+    </span>
+  );
+};
+
 const DonationSupport = () => {
+  const [sectionRef, isVisible] = useIntersectionObserver(0.3);
+
   const expenses = [
     { icon: Stethoscope, label: 'Veterinary Care Bills', cost: 'RM 2,500', color: 'text-blue-500' },
     { icon: Home, label: 'Boarding Bills', cost: 'RM 1,800', color: 'text-green-500' },
@@ -10,8 +94,11 @@ const DonationSupport = () => {
     { icon: Heart, label: 'Animal House Rent', cost: 'RM 1,500', color: 'text-red-500' },
   ];
 
+  // Animated total value
+  const totalValue = useCounterAnimation(7800, 2500, isVisible);
+
   return (
-    <section id="donate" className="py-16 bg-pink-50 relative overflow-hidden">
+    <section ref={sectionRef} id="donate" className="py-16 bg-pink-50 relative overflow-hidden">
       {/* Paw Print Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 text-red-300 text-4xl">🐾</div>
@@ -56,7 +143,7 @@ const DonationSupport = () => {
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-2xl font-bold text-red-500">{expense.cost}</span>
+                <AnimatedCost cost={expense.cost} isVisible={isVisible} />
                 <span className="text-gray-500 text-sm">/month</span>
               </div>
             </div>
@@ -66,7 +153,9 @@ const DonationSupport = () => {
           <div className="bg-red-500 rounded-2xl p-6 shadow-lg text-white lg:col-span-3 md:col-span-2">
             <div className="text-center">
               <h3 className="text-2xl font-bold mb-2">Total Monthly Need</h3>
-              <div className="text-4xl font-bold mb-2">RM 7,800</div>
+              <div className="text-4xl font-bold mb-2 tabular-nums">
+                RM {totalValue.toLocaleString()}
+              </div>
               <p className="opacity-90">Help us reach our goal to provide the best care</p>
             </div>
           </div>
