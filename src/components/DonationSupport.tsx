@@ -3,11 +3,11 @@ import { Stethoscope, Home, UtensilsCrossed, Shield, Heart } from 'lucide-react'
 
 const DonationSupport = () => {
   const expenses = [
-    { icon: Stethoscope, label: 'Veterinary Care', cost: 'RM 2,500', color: 'text-blue-500' },
-    { icon: Home, label: 'Boarding & Shelter', cost: 'RM 1,800', color: 'text-green-500' },
-    { icon: UtensilsCrossed, label: 'Food & Nutrition', cost: 'RM 1,200', color: 'text-orange-500' },
+    { icon: Stethoscope, label: 'Veterinary Care Bills', cost: 'RM 2,500', color: 'text-blue-500' },
+    { icon: Home, label: 'Boarding Bills', cost: 'RM 1,800', color: 'text-green-500' },
+    { icon: UtensilsCrossed, label: 'Food & Supplies', cost: 'RM 1,200', color: 'text-orange-500' },
     { icon: Shield, label: 'Parasite Prevention', cost: 'RM 800', color: 'text-purple-500' },
-    { icon: Heart, label: 'Emergency Care', cost: 'RM 1,500', color: 'text-red-500' },
+    { icon: Heart, label: 'Animal House Rent', cost: 'RM 1,500', color: 'text-red-500' },
   ];
 
   return (
