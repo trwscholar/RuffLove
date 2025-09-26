@@ -10,17 +10,17 @@ const useCounterAnimation = (endValue: number, duration: number = 2000, isVisibl
     if (!isVisible || hasAnimated) return;
 
     setHasAnimated(true);
-    let startTime: number;
+    let startTime: number | null = null;
     let animationFrame: number;
 
     const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
+      if (startTime === null) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / duration, 1);
-      
+
       // Easing function for smooth animation
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
       const currentCount = Math.floor(easeOutQuart * endValue);
-      
+
       setCount(currentCount);
 
       if (progress < 1) {
@@ -30,11 +30,7 @@ const useCounterAnimation = (endValue: number, duration: number = 2000, isVisibl
 
     animationFrame = requestAnimationFrame(animate);
 
-    return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
-    };
+    return () => cancelAnimationFrame(animationFrame);
   }, [endValue, duration, isVisible, hasAnimated]);
 
   return count;
@@ -43,23 +39,27 @@ const useCounterAnimation = (endValue: number, duration: number = 2000, isVisibl
 // Intersection Observer hook
 const useIntersectionObserver = (threshold: number = 0.3) => {
   const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          observer.unobserve(entry.target); // stop observing once triggered
         }
       },
-      { threshold, rootMargin: '50px' }
+      { threshold, rootMargin: '0px' }
     );
 
     if (ref.current) {
       observer.observe(ref.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      if (ref.current) observer.unobserve(ref.current);
+      observer.disconnect();
+    };
   }, [threshold]);
 
   return [ref, isVisible] as const;
@@ -67,11 +67,9 @@ const useIntersectionObserver = (threshold: number = 0.3) => {
 
 // Animated cost component
 const AnimatedCost: React.FC<{ cost: string; isVisible: boolean }> = ({ cost, isVisible }) => {
-  // Extract number from cost string (e.g., "RM 2,500" -> 2500)
   const numericValue = parseInt(cost.replace(/[^\d]/g, ''));
   const animatedValue = useCounterAnimation(numericValue, 2000, isVisible);
-  
-  // Format the animated value back to currency format
+
   const formatCurrency = (value: number) => {
     return `RM ${value.toLocaleString()}`;
   };
@@ -87,14 +85,13 @@ const DonationSupport = () => {
   const [sectionRef, isVisible] = useIntersectionObserver(0.3);
 
   const expenses = [
-    { icon: Stethoscope, label: 'Veterinary Care Bills', cost: 2,500, color: 'text-blue-500' },
-    { icon: Home, label: 'Boarding Bills', cost: 1,800, color: 'text-green-500' },
-    { icon: UtensilsCrossed, label: 'Food & Supplies', cost: 1,200, color: 'text-orange-500' },
-    { icon: Shield, label: 'Parasite Prevention', cost: 800, color: 'text-purple-500' },
-    { icon: Heart, label: 'Animal House Rent', cost: 1,500, color: 'text-red-500' },
+    { icon: Stethoscope, label: 'Veterinary Care Bills', cost: 'RM 2,500', color: 'text-blue-500' },
+    { icon: Home, label: 'Boarding Bills', cost: 'RM 1,800', color: 'text-green-500' },
+    { icon: UtensilsCrossed, label: 'Food & Supplies', cost: 'RM 1,200', color: 'text-orange-500' },
+    { icon: Shield, label: 'Parasite Prevention', cost: 'RM 800', color: 'text-purple-500' },
+    { icon: Heart, label: 'Animal House Rent', cost: 'RM 1,500', color: 'text-red-500' },
   ];
 
-  // Animated total value
   const totalValue = useCounterAnimation(7800, 2500, isVisible);
 
   return (
