@@ -87,11 +87,11 @@ const DonationSupport = () => {
   const [sectionRef, isVisible] = useIntersectionObserver(0.3);
 
   const expenses = [
-    { icon: Stethoscope, label: 'Veterinary Care Bills', cost: 'RM 2,500', color: 'text-blue-500' },
-    { icon: Home, label: 'Boarding Bills', cost: 'RM 1,800', color: 'text-green-500' },
-    { icon: UtensilsCrossed, label: 'Food & Supplies', cost: 'RM 1,200', color: 'text-orange-500' },
-    { icon: Shield, label: 'Parasite Prevention', cost: 'RM 800', color: 'text-purple-500' },
-    { icon: Heart, label: 'Animal House Rent', cost: 'RM 1,500', color: 'text-red-500' },
+    { icon: Stethoscope, label: 'Veterinary Care Bills', cost: 2,500, color: 'text-blue-500' },
+    { icon: Home, label: 'Boarding Bills', cost: 1,800, color: 'text-green-500' },
+    { icon: UtensilsCrossed, label: 'Food & Supplies', cost: 1,200, color: 'text-orange-500' },
+    { icon: Shield, label: 'Parasite Prevention', cost: 800, color: 'text-purple-500' },
+    { icon: Heart, label: 'Animal House Rent', cost: 1,500, color: 'text-red-500' },
   ];
 
   // Animated total value
