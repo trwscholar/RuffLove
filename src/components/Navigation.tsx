@@ -66,7 +66,7 @@ const Navigation = () => {
                 draggable={false}
               />
               <span className="text-xl font-bold text-gray-800 font-rounded whitespace-nowrap">
-                Ruff Love Malaysia New
+                Ruff Love Malaysia
               </span>
             </a>
 
