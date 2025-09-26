@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, MessageCircle } from 'lucide-react';
+import PawsAndBonesBackground from './PawsAndBonesBackground';
 
 const ContactLocation = () => {
   const [formData, setFormData] = useState({
@@ -22,8 +23,11 @@ const ContactLocation = () => {
   };
 
   return (
-    <section id="contact" className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-4">
+    <section id="contact" className="relative py-16 bg-gradient-to-br from-pink-50 via-white to-pink-100 overflow-hidden">
+      {/* Animated Background */}
+      <PawsAndBonesBackground density={20} speed={0.8} iconSize={16} />
+      
+      <div className="relative z-10 max-w-6xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-4 font-rounded">
             Get In Touch
