@@ -209,7 +209,8 @@ function AdminPanel() {
   };
 
   const handleLogout = async () => {
-    navigate("/");
+    await supabase.auth.signOut();
+    navigate("/admin-login");
   };
 
   return (
@@ -245,7 +246,7 @@ function AdminPanel() {
           className="border p-2 w-full rounded"
         >
           <option value="" disabled>
-          Select the Gender
+          Select Gender
           </option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>

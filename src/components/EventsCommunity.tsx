@@ -1,6 +1,21 @@
 import React from 'react';
 import { Calendar, MapPin, Clock, Users } from 'lucide-react';
 
+interface AnimalEventItem {
+  id: string;
+  location: string;
+  time: string;
+  price: string;
+  description: string;
+  image_url: string;
+}
+
+interface AnimalEventProps {
+  heading?: string;
+  description?: string;
+  adoptionUrl?: string;
+}
+
 const EventsCommunity = () => {
   const events = [
     {
