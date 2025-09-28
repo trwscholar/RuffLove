@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import supabase from "../supabase-client";
 import AdminPanel from "./AdminPanel";
-// import EventPanel from "./EventPanel";
+import EventPanel from "./EventPanel";
 // import BillingPanel from "./BillingPanel";
 
 function Admin() {
@@ -52,7 +52,7 @@ function Admin() {
       {/* Panel Rendering */}
       <div className="border rounded-lg p-6 shadow-md bg-white">
         {activePanel === "gallery" && <AdminPanel />}
-        {/* {activePanel === "events" && <EventPanel />} */}
+        {activePanel === "events" && <EventPanel />}
         {/* {activePanel === "billing" && <BillingPanel />} */}
       </div>
     </section>
