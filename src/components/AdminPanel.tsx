@@ -208,21 +208,10 @@ function AdminPanel() {
     setIsUrgent(false);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/admin-login");
-  };
-
   return (
     <section className="max-w-7xl mx-auto px-4 py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Admin Panel</h1>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
       </div>
 
       <div className="bg-white border rounded-xl p-6 shadow-lg mb-10 max-w-2xl space-y-3">

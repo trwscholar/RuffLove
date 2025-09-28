@@ -13,9 +13,9 @@ import Testimonials from "./components/Testimonials";
 import SocialMedia from "./components/SocialMedia";
 import ContactLocation from "./components/ContactLocation";
 import Footer from "./components/Footer";
-import AdminPanel from "./components/AdminPanel";
 import AdminLogin from "./components/AdminLogin";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Admin from "./components/Admin";
 
 // HomePage composed of all your user-side components
 function HomePage() {
@@ -49,11 +49,11 @@ function App() {
 
         {/* Admin Panel Page */}
         <Route
-    path="/admin"
-    element={
-      <ProtectedRoute>
-        <AdminPanel />
-      </ProtectedRoute>
+            path="/admin"
+            element={
+          <ProtectedRoute>
+            <Admin />
+        </ProtectedRoute>
     }
   />
       </Routes>
