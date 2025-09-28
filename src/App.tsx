@@ -48,8 +48,14 @@ function App() {
 
 
         {/* Admin Panel Page */}
-        <Route path="/admin" element={<AdminPanel />} />
-
+        <Route
+    path="/admin"
+    element={
+      <ProtectedRoute>
+        <AdminPanel />
+      </ProtectedRoute>
+    }
+  />
       </Routes>
     </Router>
   );
