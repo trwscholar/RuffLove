@@ -33,6 +33,7 @@ function AdminLogin() {
       <form
         onSubmit={handleLogin}
         className="bg-white p-6 rounded-lg shadow-md space-y-4 w-80"
+        autoComplete="off"
       >
         <h2 className="text-xl font-bold">Admin Login</h2>
         {message && <p className="text-red-500">{message}</p>}
@@ -42,6 +43,8 @@ function AdminLogin() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="border p-2 w-full rounded"
+          autoComplete="new-email"
+          name="admin-email"
         />
         <input
           type="password"
@@ -49,6 +52,8 @@ function AdminLogin() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="border p-2 w-full rounded"
+          autoComplete="new-password"
+          name="admin-password"
         />
         <button
           type="submit"
