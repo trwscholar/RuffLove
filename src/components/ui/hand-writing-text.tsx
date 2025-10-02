@@ -62,7 +62,7 @@ function HandWrittenTitle({
             return (
                 <>
                     {parts[0]}
-                    <span className="text-red-500">Ruff Love Malaysia</span>
+                    <span className="text-red-500">Ruff Love Malaysia ZZZZZZ</span>
                     {parts[1]}
                 </>
             );
