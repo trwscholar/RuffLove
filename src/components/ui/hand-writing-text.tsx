@@ -87,7 +87,7 @@ function HandWrittenTitle({
                     {/* Responsive circle path that adapts to text length */}
                     <motion.path
                         d="M 1100 80 
-                           C 2000 150, 1300 280, 900 320
+                           C 1350 150, 1300 280, 900 320
                            C 500 360, 100 320, 100 200
                            C 100 80, 300 40, 700 40
                            C 1000 40, 1100 120, 1100 120"
