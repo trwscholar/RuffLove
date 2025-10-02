@@ -86,18 +86,18 @@ function HandWrittenTitle({
                     <title>Hand Written Circle</title>
                     {/* Responsive circle path that adapts to text length */}
                     <motion.path
-                        d="M 1100 80 
-                           C 1350 150, 1300 280, 900 320
-                           C 500 360, 100 320, 100 200
-                           C 100 80, 300 40, 700 40
-                           C 1000 40, 1100 120, 1100 120"
-                        fill="none"
-                        strokeWidth="12"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        variants={draw}
-                        className="text-red-500 opacity-80"
+                      d="M 1210 88
+                         C 1485 165, 1430 308, 990 352
+                         C 550 396, 110 352, 110 220
+                         C 110 88, 330 44, 770 44
+                         C 1100 44, 1210 132, 1210 132"
+                      fill="none"
+                      strokeWidth="12"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      variants={draw}
+                      className="text-red-500 opacity-80"
                     />
                 </motion.svg>
             </div>
