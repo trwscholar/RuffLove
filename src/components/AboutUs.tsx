@@ -15,7 +15,7 @@ const AboutUs = () => {
             </h4>
 
             <HandWrittenTitle 
-              title="Who We Are At Ruff Love Malaysia"
+              title="Who We Are At Ruff Love MalaysiaS"
               className="mb-4"
             />
 
