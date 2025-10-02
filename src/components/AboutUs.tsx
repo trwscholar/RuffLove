@@ -14,7 +14,7 @@ const AboutUs = () => {
               About Us
             </h4>
 
-            <HandWrittenTitle 
+            <HandWrittenTitle>
               title="Who We Are At Ruff Love Malaysia"
               className="mb-4"
             />
@@ -24,7 +24,7 @@ const AboutUs = () => {
               rehoming animals is more than just a mission — it’s a promise. Every
               adoption not only saves a life, but it also opens up space for us to
               help another animal in need.
-            <p
+            </p>
 
             <p className="text-lg text-gray-700 leading-relaxed">
               With the dedication of our volunteers and the support of the
