@@ -55,28 +55,19 @@ function HandWrittenTitle({
         },
     };
 
-    // Split title into two lines for better circle integration
-    const renderSplitTitle = () => {
-        if (title.includes("Who We Are At Ruff Love Malaysia")) {
-            return (
-                <>
-                    <div className="text-gray-900">Who We Are At</div>
-                    <div className="text-red-500 mt-2">Ruff Love Malaysia</div>
-                </>
-            );
-        }
-        // Fallback for other titles
+    // Parse title to highlight "Ruff Love Malaysia" in red
+    const renderTitle = () => {
         if (title.includes("Ruff Love Malaysia")) {
             const parts = title.split("Ruff Love Malaysia");
             return (
                 <>
-                    <div className="text-gray-900">{parts[0].trim()}</div>
-                    <div className="text-red-500 mt-2">Ruff Love Malaysia</div>
-                    {parts[1] && <div className="text-gray-900">{parts[1].trim()}</div>}
+                    {parts[0]}
+                    <span className="text-red-500">Ruff Love Malaysia</span>
+                    {parts[1]}
                 </>
             );
         }
-        return <div className="text-gray-900">{title}</div>;
+        return title;
     };
 
     return (
@@ -86,39 +77,39 @@ function HandWrittenTitle({
                     key={animationKey} // Force re-render on animation reset
                     width="100%"
                     height="100%"
-                    viewBox="0 0 1400 300"
+                    viewBox="0 0 1400 400"
                     initial="hidden"
                     animate={isVisible ? "visible" : "hidden"}
-                    className="w-full h-full min-h-[180px]"
+                    className="w-full h-full min-h-[120px]"
                     preserveAspectRatio="xMidYMid meet"
                 >
                     <title>Hand Written Circle</title>
-                    {/* Oval circle path optimized for two-line text */}
+                    {/* Responsive circle path that adapts to text length */}
                     <motion.path
-                      d="M 1100 60
-                         C 1350 90, 1320 180, 1000 220
-                         C 680 260, 350 240, 300 150
-                         C 250 60, 450 40, 700 40
-                         C 950 40, 1100 80, 1100 80"
-                      fill="none"
-                      strokeWidth="12"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      variants={draw}
-                      className="text-red-500 opacity-80"
+                        d="M 1100 80 
+                           C 1350 150, 1300 280, 900 320
+                           C 500 360, 100 320, 100 200
+                           C 100 80, 300 40, 700 40
+                           C 1000 40, 1100 120, 1100 120"
+                        fill="none"
+                        strokeWidth="12"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        variants={draw}
+                        className="text-red-500 opacity-80"
                     />
                 </motion.svg>
             </div>
-            <div className="relative text-center z-10 flex flex-col items-center justify-center px-4 min-h-[180px]">
+            <div className="relative text-center z-10 flex flex-col items-center justify-center px-4">
                 <motion.h2
                     key={`text-${animationKey}`} // Force re-render on animation reset
-                    className="text-2xl md:text-3xl lg:text-4xl tracking-tight font-extrabold leading-tight flex flex-col items-center"
+                    className="text-3xl md:text-4xl lg:text-5xl text-gray-900 tracking-tight font-extrabold leading-snug"
                     initial={{ opacity: 0, y: 20 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ delay: isVisible ? 0.5 : 0, duration: 0.8 }}
                 >
-                    {renderSplitTitle()}
+                    {renderTitle()}
                 </motion.h2>
             </div>
         </div>
