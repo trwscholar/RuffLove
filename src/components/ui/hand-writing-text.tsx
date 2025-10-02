@@ -92,7 +92,7 @@ function HandWrittenTitle({
                            C 100 80, 300 40, 700 40
                            C 1000 40, 1100 120, 1100 120"
                         fill="none"
-                        strokeWidth="12"
+                        strokeWidth="15"
                         stroke="currentColor"
                         strokeLinecap="round"
                         strokeLinejoin="round"
