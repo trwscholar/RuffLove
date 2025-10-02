@@ -14,10 +14,10 @@ const AboutUs = () => {
               About Us
             </h4>
 
-            <HandWrittenTitle>
-              title="Who We Are At Ruff Love Malaysia"
-              className="mb-4"
-            />
+            <HandWrittenTitle 
+                title="Who We Are At Ruff Love Malaysia" 
+                className="mb-4" 
+              />
 
             <p className="text-lg text-gray-700 leading-relaxed">
               At Ruff Love Malaysia, we believe that rescuing, rehabilitating, and
