@@ -55,19 +55,28 @@ function HandWrittenTitle({
         },
     };
 
-    // Parse title to highlight "Ruff Love Malaysia" in red
-    const renderTitle = () => {
+    // Split title into two lines for better circle integration
+    const renderSplitTitle = () => {
+        if (title.includes("Who We Are At Ruff Love Malaysia")) {
+            return (
+                <>
+                    <div className="text-gray-900">Who We Are At</div>
+                    <div className="text-red-500 mt-2">Ruff Love Malaysia</div>
+                </>
+            );
+        }
+        // Fallback for other titles
         if (title.includes("Ruff Love Malaysia")) {
             const parts = title.split("Ruff Love Malaysia");
             return (
                 <>
-                    {parts[0]}
-                    <span className="text-red-500">Ruff Love Malaysia</span>
-                    {parts[1]}
+                    <div className="text-gray-900">{parts[0].trim()}</div>
+                    <div className="text-red-500 mt-2">Ruff Love Malaysia</div>
+                    {parts[1] && <div className="text-gray-900">{parts[1].trim()}</div>}
                 </>
             );
         }
-        return title;
+        return <div className="text-gray-900">{title}</div>;
     };
 
     return (
@@ -77,20 +86,20 @@ function HandWrittenTitle({
                     key={animationKey} // Force re-render on animation reset
                     width="100%"
                     height="100%"
-                    viewBox="0 0 1400 400"
+                    viewBox="0 0 1400 300"
                     initial="hidden"
                     animate={isVisible ? "visible" : "hidden"}
-                    className="w-full h-full min-h-[120px]"
+                    className="w-full h-full min-h-[180px]"
                     preserveAspectRatio="xMidYMid meet"
                 >
                     <title>Hand Written Circle</title>
-                    {/* Responsive circle path that adapts to text length */}
+                    {/* Oval circle path optimized for two-line text */}
                     <motion.path
-                      d="M 1210 88
-                         C 1485 165, 1430 308, 990 352
-                         C 550 396, 110 352, 110 220
-                         C 110 88, 330 44, 770 44
-                         C 1100 44, 1210 132, 1210 132"
+                      d="M 1100 60
+                         C 1350 90, 1320 180, 1000 220
+                         C 680 260, 350 240, 300 150
+                         C 250 60, 450 40, 700 40
+                         C 950 40, 1100 80, 1100 80"
                       fill="none"
                       strokeWidth="12"
                       stroke="currentColor"
@@ -101,15 +110,15 @@ function HandWrittenTitle({
                     />
                 </motion.svg>
             </div>
-            <div className="relative text-center z-10 flex flex-col items-center justify-center px-4">
+            <div className="relative text-center z-10 flex flex-col items-center justify-center px-4 min-h-[180px]">
                 <motion.h2
                     key={`text-${animationKey}`} // Force re-render on animation reset
-                    className="text-3xl md:text-4xl lg:text-5xl text-gray-900 tracking-tight font-extrabold leading-snug"
+                    className="text-2xl md:text-3xl lg:text-4xl tracking-tight font-extrabold leading-tight flex flex-col items-center"
                     initial={{ opacity: 0, y: 20 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ delay: isVisible ? 0.5 : 0, duration: 0.8 }}
                 >
-                    {renderTitle()}
+                    {renderSplitTitle()}
                 </motion.h2>
             </div>
         </div>
