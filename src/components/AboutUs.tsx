@@ -1,4 +1,5 @@
 import React from "react";
+import { HandWrittenTitle } from "./ui/hand-writing-text";
 import aboutImg from "../assets/about-placeholder.png"; // use your actual image
 
 const AboutUs = () => {
@@ -13,9 +14,10 @@ const AboutUs = () => {
               About Us
             </h4>
 
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-snug">
-              Who We Are At <span className="text-red-600">Ruff Love Malaysia</span>
-            </h2>
+            <HandWrittenTitle 
+              title="Who We Are At Ruff Love Malaysia"
+              className="mb-4"
+            />
 
             <p className="text-lg text-gray-700 leading-relaxed">
               At Ruff Love Malaysia, we believe that rescuing, rehabilitating, and
