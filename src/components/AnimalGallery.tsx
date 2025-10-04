@@ -191,7 +191,10 @@ const AnimalGallery = ({
 
                 <Button
                   className="w-full bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
-                  onClick={() => window.open(`${adoptionUrl}/${selectedAnimal.id}`, '_blank')}
+                  onClick={() => {
+                    const message = encodeURIComponent(`Hi, I would like more information on ${selectedAnimal.name}`);
+                    window.open(`https://wa.me/60193871868?text=${message}`, '_blank');
+                  }}
                 >
                   Adopt {selectedAnimal.name}
                 </Button>
@@ -203,10 +206,10 @@ const AnimalGallery = ({
 
       <section id="adopt" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 mb-8 md:mb-14 lg:mb-16 text-center">
-        <h2 className="mb-3 text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
+        <h2 className="mb-3 text-2xl sm:text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
           {heading}
         </h2>
-        <p className="text-gray-600 md:text-lg max-w-2xl mx-auto">{description}</p>
+        <p className="text-sm sm:text-base text-gray-600 md:text-lg max-w-2xl mx-auto">{description}</p>
         <div className="flex justify-center mt-4 space-x-2 text-red-500">🐾🐾🐾</div>
       </div>
 
@@ -314,7 +317,8 @@ const AnimalGallery = ({
                 className="flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
                 onClick={(e) => {
                   e.stopPropagation();
-                  window.open(`${adoptionUrl}/${animal.id}`, '_blank');
+                  const message = encodeURIComponent(`Hi, I would like more information on ${animal.name}`);
+                  window.open(`https://wa.me/60193871868?text=${message}`, '_blank');
                 }}
               >
                 Adopt Me

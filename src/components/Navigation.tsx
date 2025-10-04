@@ -64,7 +64,7 @@ const Navigation = () => {
                 className="h-12 w-auto object-contain select-none"
                 draggable={false}
               />
-              <span className="text-xl font-bold text-gray-800 font-rounded whitespace-nowrap">
+              <span className="text-base sm:text-lg md:text-xl font-bold text-gray-800 font-rounded whitespace-nowrap">
                 Ruff Love Malaysia
               </span>
             </a>
@@ -105,9 +105,9 @@ const Navigation = () => {
 
             {/* Desktop CTA + Social Icons */}
             <div className="hidden md:flex items-center space-x-4">
-              <button className="bg-red-500 text-white px-4 py-1.5 rounded-full font-semibold text-sm shadow-md hover:bg-red-400 transition-all duration-200">
+              <a href="#adopt" className="bg-red-500 text-white px-4 py-1.5 rounded-full font-semibold text-sm shadow-md hover:bg-red-400 transition-all duration-200">
                 Adopt Now
-              </button>
+              </a>
 
               <a
                 href="https://www.instagram.com/rufflove.my/"
@@ -129,9 +129,9 @@ const Navigation = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-2">
-              <button className="bg-red-500 text-white px-3 py-1.5 rounded-full font-semibold text-sm shadow-md hover:bg-red-400 transition-colors duration-200">
+              <a href="#adopt" className="bg-red-500 text-white px-3 py-1.5 rounded-full font-semibold text-xs sm:text-sm shadow-md hover:bg-red-400 transition-colors duration-200">
                 Adopt Now
-              </button>
+              </a>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 text-gray-700 hover:text-red-500 transition-colors duration-200"

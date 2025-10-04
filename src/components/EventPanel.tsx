@@ -231,12 +231,24 @@ const EventPanel: React.FC = () => {
           onChange={(e) => setPrice(Number(e.target.value))}
           className="border p-2 w-full rounded"
         />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
+        <div className="relative">
+          <textarea
+            placeholder="Description (max 500 characters)"
+            value={description}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 500) {
+                setDescription(value);
+              }
+            }}
+            maxLength={500}
+            className="border p-2 w-full rounded"
+            rows={4}
+          />
+          <div className="text-sm text-gray-500 mt-1 text-right">
+            {description.length}/500 characters
+          </div>
+        </div>
 
         <input
           type="file"

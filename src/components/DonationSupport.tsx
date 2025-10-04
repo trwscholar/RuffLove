@@ -163,13 +163,13 @@ const DonationSupport = () => {
     <section ref={sectionRef} id="donate" className="py-16 bg-pink-50 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-red-500 mb-4 font-rounded">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-500 mb-4 font-rounded">
             Help Us Care for 46 Animals
           </h2>
-          <p className="text-xl text-gray-700 mb-2">
+          <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-2">
             Your donation directly supports our furry friends
           </p>
-          <p className="text-lg text-gray-600">Monthly expenses breakdown:</p>
+          <p className="text-sm sm:text-base md:text-lg text-gray-600">Monthly expenses breakdown:</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
