@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ArrowLeft, ArrowRight, Heart, MapPin } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, MapPin, X } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from './ui/Carousel';
 import { cn } from '../utils/cn';
@@ -34,6 +34,7 @@ const AnimalGallery = ({
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [selectedAnimal, setSelectedAnimal] = useState<AnimalGalleryItem | null>(null);
 
   const fetchGallery = async () => {
     const { data, error } = await supabase
@@ -128,8 +129,80 @@ const AnimalGallery = ({
   };
 
   return (
-    <section id="adopt" className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-4 mb-8 md:mb-14 lg:mb-16 text-center">
+    <>
+      {selectedAnimal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          onClick={() => setSelectedAnimal(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedAnimal(null)}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors shadow-lg"
+              aria-label="Close popup"
+            >
+              <X className="w-6 h-6 text-gray-800" />
+            </button>
+
+            <div className="flex flex-col md:flex-row max-h-[90vh]">
+              <div className="md:w-1/2 flex-shrink-0">
+                <img
+                  src={selectedAnimal.image_url}
+                  alt={`${selectedAnimal.name} - ${selectedAnimal.breed}`}
+                  className="w-full h-64 md:h-full object-cover"
+                />
+              </div>
+
+              <div className="md:w-1/2 p-6 md:p-8 overflow-y-auto">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-2">{selectedAnimal.name}</h2>
+                    <p className="text-lg text-gray-600 font-medium">{selectedAnimal.breed}</p>
+                  </div>
+                  {selectedAnimal.isUrgent && (
+                    <div className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      Urgent
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <span className="font-semibold">Age:</span>
+                    <span>{selectedAnimal.age}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <span className="font-semibold">Gender:</span>
+                    <span>{selectedAnimal.gender}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <MapPin className="w-5 h-5 text-gray-600" />
+                    <span>{selectedAnimal.location}</span>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <h3 className="font-semibold text-gray-800 mb-2">About {selectedAnimal.name}</h3>
+                  <p className="text-gray-600 leading-relaxed">{selectedAnimal.description}</p>
+                </div>
+
+                <Button
+                  className="w-full bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
+                  onClick={() => window.open(`${adoptionUrl}/${selectedAnimal.id}`, '_blank')}
+                >
+                  Adopt {selectedAnimal.name}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <section id="adopt" className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 mb-8 md:mb-14 lg:mb-16 text-center">
         <h2 className="mb-3 text-3xl font-bold text-gray-800 md:mb-4 md:text-4xl lg:mb-6 lg:text-5xl font-rounded">
           {heading}
         </h2>
@@ -171,7 +244,10 @@ const AnimalGallery = ({
   <CarouselContent className="ml-4 2xl:ml-[max(4rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))] py-8">
     {animals.map((animal) => (
       <CarouselItem key={animal.id} className="pl-4 md:max-w-[320px] lg:max-w-[360px]">
-        <div className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col">
+        <div
+          className="group relative overflow-hidden rounded-2xl bg-white border border-pink-100 shadow-lg transition-all duration-300 hover:scale-105 h-[440px] flex flex-col cursor-pointer"
+          onClick={() => setSelectedAnimal(animal)}
+        >
           
           {/* IMAGE CONTAINER WITH ASPECT RATIO */}
           <div className="relative w-full overflow-hidden rounded-t-2xl flex-shrink-0 aspect-[16/9]">
@@ -186,7 +262,10 @@ const AnimalGallery = ({
               </div>
             )}
             <button
-              onClick={() => toggleFavorite(animal.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFavorite(animal.id);
+              }}
               className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
               aria-label={`${favorites.has(animal.id) ? 'Remove from' : 'Add to'} favorites`}
             >
@@ -233,7 +312,10 @@ const AnimalGallery = ({
             <div className="flex gap-3 mt-auto">
               <Button
                 className="flex-1 bg-red-500 hover:bg-red-400 text-white font-bold py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
-                onClick={() => window.open(`${adoptionUrl}/${animal.id}`, '_blank')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(`${adoptionUrl}/${animal.id}`, '_blank');
+                }}
               >
                 Adopt Me
               </Button>
@@ -247,7 +329,8 @@ const AnimalGallery = ({
 </Carousel>
 
       </div>
-    </section>
+      </section>
+    </>
   );
 };
 

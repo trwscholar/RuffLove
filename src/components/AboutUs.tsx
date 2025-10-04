@@ -14,14 +14,24 @@ const AboutUs = () => {
               About Us
             </h4>
 
-            <HandWrittenTitle 
-                title="Who We Are At Ruff Love Malaysia" 
-                className="mb-4" 
+            <HandWrittenTitle
+                title="Who We Are At Ruff Love Malaysia"
+                className="mb-4"
               />
+
+            {/* Image (mobile/tablet only) - Appears after title */}
+            <div className="lg:hidden relative mb-6">
+              <img
+                src={aboutImg}
+                alt="About Ruff Love"
+                className="w-full h-[340px] sm:h-[420px] object-cover rounded-2xl shadow-lg"
+              />
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-red-50 via-red-50/80 to-transparent rounded-2xl" />
+            </div>
 
             <p className="text-lg text-gray-700 leading-relaxed">
               At Ruff Love Malaysia, we believe that rescuing, rehabilitating, and
-              rehoming animals is more than just a mission — it’s a promise. Every
+              rehoming animals is more than just a mission — it's a promise. Every
               adoption not only saves a life, but it also opens up space for us to
               help another animal in need.
             </p>
@@ -35,16 +45,6 @@ const AboutUs = () => {
             <button className="mt-6 inline-flex items-center justify-center rounded-full bg-[#E53935] px-6 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-red-500 active:scale-95">
               Learn More
             </button>
-          </div>
-
-          {/* RIGHT: Image (mobile/tablet only) */}
-          <div className="lg:col-span-7 lg:hidden relative">
-            <img
-              src={aboutImg}
-              alt="About Ruff Love"
-              className="w-full h-[340px] sm:h-[420px] object-cover rounded-2xl shadow-lg"
-            />
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-red-50 via-red-50/80 to-transparent rounded-2xl" />
           </div>
         </div>
       </div>
