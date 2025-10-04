@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import supabase from "../supabase-client";
 import AdminPanel from "./AdminPanel";
 import EventPanel from "./EventPanel";
-// import BillingPanel from "./BillingPanel";
+import BillingPanel from "./BillingPanel";
 
 function Admin() {
   const [activePanel, setActivePanel] = useState<"gallery" | "events" | "billing">("gallery");
@@ -53,7 +53,7 @@ function Admin() {
       <div className="border rounded-lg p-6 shadow-md bg-white">
         {activePanel === "gallery" && <AdminPanel />}
         {activePanel === "events" && <EventPanel />}
-        {/* {activePanel === "billing" && <BillingPanel />} */}
+        {activePanel === "billing" && <BillingPanel />}
       </div>
     </section>
   );

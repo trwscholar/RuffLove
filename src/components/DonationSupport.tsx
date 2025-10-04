@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Stethoscope, Home, UtensilsCrossed, Shield, Heart } from 'lucide-react';
+import supabase from '../supabase-client';
 
 // Counter animation hook
 const useCounterAnimation = (endValue: number, duration: number = 2000, isVisible: boolean = false) => {
@@ -76,18 +77,60 @@ const AnimatedCost: React.FC<{ cost: string; isVisible: boolean }> = ({ cost, is
   );
 };
 
+interface BillingItem {
+  id: number;
+  title: string;
+  description: string;
+  amount: number;
+}
+
 const DonationSupport = () => {
   const { ref: sectionRef, isVisible } = useIntersectionObserver(0.3);
+  const [bills, setBills] = useState<BillingItem[]>([]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
-  const expenses = [
-    { icon: Stethoscope, label: 'Veterinary Care Bills', cost: 'RM 2,500', color: 'text-blue-500' },
-    { icon: Home, label: 'Boarding Bills', cost: 'RM 1,800', color: 'text-green-500' },
-    { icon: UtensilsCrossed, label: 'Food & Supplies', cost: 'RM 1,200', color: 'text-orange-500' },
-    { icon: Shield, label: 'Parasite Prevention', cost: 'RM 800', color: 'text-purple-500' },
-    { icon: Heart, label: 'Animal House Rent', cost: 'RM 1,500', color: 'text-red-500' },
-  ];
+  const iconMap: { [key: string]: any } = {
+    'Veterinary Care Bills': { icon: Stethoscope, color: 'text-blue-500' },
+    'Boarding Bills': { icon: Home, color: 'text-green-500' },
+    'Food & Supplies': { icon: UtensilsCrossed, color: 'text-orange-500' },
+    'Parasite Prevention': { icon: Shield, color: 'text-purple-500' },
+    'Animal House Rent': { icon: Heart, color: 'text-red-500' },
+  };
 
-  const totalValue = useCounterAnimation(7800, 2500, isVisible);
+  useEffect(() => {
+    fetchBills();
+  }, []);
+
+  const fetchBills = async () => {
+    const { data, error } = await supabase
+      .from('Billing')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching bills:', error);
+    } else if (data) {
+      setBills(data);
+      const total = data.reduce((sum, bill) => sum + parseFloat(bill.amount.toString()), 0);
+      setTotalAmount(total);
+    }
+  };
+
+  const getIconForBill = (title: string) => {
+    return iconMap[title] || { icon: Heart, color: 'text-red-500' };
+  };
+
+  const expenses = bills.map(bill => {
+    const { icon, color } = getIconForBill(bill.title);
+    return {
+      icon,
+      label: bill.title,
+      cost: `RM ${parseFloat(bill.amount.toString()).toLocaleString()}`,
+      color
+    };
+  });
+
+  const totalValue = useCounterAnimation(Math.round(totalAmount), 2500, isVisible);
 
   return (
     <section ref={sectionRef} id="donate" className="py-16 bg-pink-50 relative overflow-hidden">
