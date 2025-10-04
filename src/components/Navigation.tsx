@@ -23,7 +23,6 @@ const Navigation = () => {
     { id: "donate", label: "Donate", href: "#donate", type: "section" as const },
     { id: "events", label: "Events", href: "#events", type: "section" as const },
     { id: "contact", label: "Contact", href: "#contact", type: "section" as const },
-    { id: "admin", label: "Admin Panel", href: "/admin-login", type: "route" as const },
   ];
 
   const handleLinkClick = (linkId: string, href?: string, type?: string) => {
