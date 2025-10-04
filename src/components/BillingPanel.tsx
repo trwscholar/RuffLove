@@ -1,12 +1,48 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../supabase-client";
+import {
+  Stethoscope,
+  Home,
+  UtensilsCrossed,
+  Shield,
+  Heart,
+  Pill,
+  Syringe,
+  DollarSign,
+  ShoppingCart,
+  Truck,
+  Scissors,
+  Dog,
+  Cat,
+  Activity,
+  ClipboardList,
+} from "lucide-react";
 
 interface BillingItem {
   id: number;
   title: string;
   description: string;
   amount: number;
+  icon: string;
 }
+
+const ICON_OPTIONS = [
+  { name: "Heart", icon: Heart, color: "text-red-500" },
+  { name: "Stethoscope", icon: Stethoscope, color: "text-blue-500" },
+  { name: "Home", icon: Home, color: "text-green-500" },
+  { name: "UtensilsCrossed", icon: UtensilsCrossed, color: "text-orange-500" },
+  { name: "Shield", icon: Shield, color: "text-purple-500" },
+  { name: "Pill", icon: Pill, color: "text-pink-500" },
+  { name: "Syringe", icon: Syringe, color: "text-teal-500" },
+  { name: "DollarSign", icon: DollarSign, color: "text-green-600" },
+  { name: "ShoppingCart", icon: ShoppingCart, color: "text-yellow-500" },
+  { name: "Truck", icon: Truck, color: "text-gray-600" },
+  { name: "Scissors", icon: Scissors, color: "text-indigo-500" },
+  { name: "Dog", icon: Dog, color: "text-amber-600" },
+  { name: "Cat", icon: Cat, color: "text-orange-600" },
+  { name: "Activity", icon: Activity, color: "text-red-600" },
+  { name: "ClipboardList", icon: ClipboardList, color: "text-slate-600" },
+];
 
 const BillingPanel = () => {
   const [bills, setBills] = useState<BillingItem[]>([]);
@@ -16,6 +52,7 @@ const BillingPanel = () => {
     title: "",
     description: "",
     amount: 0,
+    icon: "Heart",
   });
 
   useEffect(() => {
@@ -43,6 +80,7 @@ const BillingPanel = () => {
       title: bill.title,
       description: bill.description,
       amount: bill.amount,
+      icon: bill.icon || "Heart",
     });
   };
 
@@ -55,6 +93,7 @@ const BillingPanel = () => {
         title: formData.title,
         description: formData.description,
         amount: formData.amount,
+        icon: formData.icon,
       })
       .eq("id", editingId);
 
@@ -64,14 +103,14 @@ const BillingPanel = () => {
     } else {
       alert("Bill updated successfully!");
       setEditingId(null);
-      setFormData({ title: "", description: "", amount: 0 });
+      setFormData({ title: "", description: "", amount: 0, icon: "Heart" });
       fetchBills();
     }
   };
 
   const handleCancel = () => {
     setEditingId(null);
-    setFormData({ title: "", description: "", amount: 0 });
+    setFormData({ title: "", description: "", amount: 0, icon: "Heart" });
   };
 
   const handleCreate = async () => {
@@ -85,6 +124,7 @@ const BillingPanel = () => {
         title: formData.title,
         description: formData.description,
         amount: formData.amount,
+        icon: formData.icon,
       },
     ]);
 
@@ -93,7 +133,7 @@ const BillingPanel = () => {
       alert("Failed to create bill");
     } else {
       alert("Bill created successfully!");
-      setFormData({ title: "", description: "", amount: 0 });
+      setFormData({ title: "", description: "", amount: 0, icon: "Heart" });
       fetchBills();
     }
   };
@@ -110,6 +150,11 @@ const BillingPanel = () => {
       alert("Bill deleted successfully!");
       fetchBills();
     }
+  };
+
+  const getIconComponent = (iconName: string) => {
+    const iconOption = ICON_OPTIONS.find((opt) => opt.name === iconName);
+    return iconOption || ICON_OPTIONS[0];
   };
 
   if (loading) {
@@ -148,6 +193,28 @@ const BillingPanel = () => {
               className="w-full border rounded px-3 py-2"
               placeholder="Optional description"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Icon</label>
+            <select
+              value={formData.icon}
+              onChange={(e) =>
+                setFormData({ ...formData, icon: e.target.value })
+              }
+              className="w-full border rounded px-3 py-2"
+            >
+              {ICON_OPTIONS.map((option) => (
+                <option key={option.name} value={option.name}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+            <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+              <span>Preview:</span>
+              {React.createElement(getIconComponent(formData.icon).icon, {
+                className: `w-6 h-6 ${getIconComponent(formData.icon).color}`,
+              })}
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Amount (RM)</label>
@@ -197,38 +264,48 @@ const BillingPanel = () => {
           <p className="text-gray-500">No bills found. Add your first bill above.</p>
         ) : (
           <div className="grid gap-4">
-            {bills.map((bill) => (
-              <div
-                key={bill.id}
-                className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h4 className="font-bold text-lg">{bill.title}</h4>
-                    {bill.description && (
-                      <p className="text-gray-600 text-sm mt-1">{bill.description}</p>
-                    )}
-                    <p className="text-red-500 font-bold text-xl mt-2">
-                      RM {parseFloat(bill.amount.toString()).toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(bill)}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(bill.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
-                    >
-                      Delete
-                    </button>
+            {bills.map((bill) => {
+              const IconComponent = getIconComponent(bill.icon || "Heart");
+              return (
+                <div
+                  key={bill.id}
+                  className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-start gap-3 flex-1">
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mt-1">
+                        {React.createElement(IconComponent.icon, {
+                          className: `w-6 h-6 ${IconComponent.color}`,
+                        })}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-lg">{bill.title}</h4>
+                        {bill.description && (
+                          <p className="text-gray-600 text-sm mt-1">{bill.description}</p>
+                        )}
+                        <p className="text-red-500 font-bold text-xl mt-2">
+                          RM {parseFloat(bill.amount.toString()).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(bill)}
+                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(bill.id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

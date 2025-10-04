@@ -1,5 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Stethoscope, Home, UtensilsCrossed, Shield, Heart } from 'lucide-react';
+import {
+  Stethoscope,
+  Home,
+  UtensilsCrossed,
+  Shield,
+  Heart,
+  Pill,
+  Syringe,
+  DollarSign,
+  ShoppingCart,
+  Truck,
+  Scissors,
+  Dog,
+  Cat,
+  Activity,
+  ClipboardList,
+} from 'lucide-react';
 import supabase from '../supabase-client';
 
 // Counter animation hook
@@ -82,20 +98,31 @@ interface BillingItem {
   title: string;
   description: string;
   amount: number;
+  icon: string;
 }
+
+const ICON_MAP: { [key: string]: { icon: any; color: string } } = {
+  Heart: { icon: Heart, color: 'text-red-500' },
+  Stethoscope: { icon: Stethoscope, color: 'text-blue-500' },
+  Home: { icon: Home, color: 'text-green-500' },
+  UtensilsCrossed: { icon: UtensilsCrossed, color: 'text-orange-500' },
+  Shield: { icon: Shield, color: 'text-purple-500' },
+  Pill: { icon: Pill, color: 'text-pink-500' },
+  Syringe: { icon: Syringe, color: 'text-teal-500' },
+  DollarSign: { icon: DollarSign, color: 'text-green-600' },
+  ShoppingCart: { icon: ShoppingCart, color: 'text-yellow-500' },
+  Truck: { icon: Truck, color: 'text-gray-600' },
+  Scissors: { icon: Scissors, color: 'text-indigo-500' },
+  Dog: { icon: Dog, color: 'text-amber-600' },
+  Cat: { icon: Cat, color: 'text-orange-600' },
+  Activity: { icon: Activity, color: 'text-red-600' },
+  ClipboardList: { icon: ClipboardList, color: 'text-slate-600' },
+};
 
 const DonationSupport = () => {
   const { ref: sectionRef, isVisible } = useIntersectionObserver(0.3);
   const [bills, setBills] = useState<BillingItem[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
-
-  const iconMap: { [key: string]: any } = {
-    'Veterinary Care Bills': { icon: Stethoscope, color: 'text-blue-500' },
-    'Boarding Bills': { icon: Home, color: 'text-green-500' },
-    'Food & Supplies': { icon: UtensilsCrossed, color: 'text-orange-500' },
-    'Parasite Prevention': { icon: Shield, color: 'text-purple-500' },
-    'Animal House Rent': { icon: Heart, color: 'text-red-500' },
-  };
 
   useEffect(() => {
     fetchBills();
@@ -116,12 +143,12 @@ const DonationSupport = () => {
     }
   };
 
-  const getIconForBill = (title: string) => {
-    return iconMap[title] || { icon: Heart, color: 'text-red-500' };
+  const getIconForBill = (iconName: string) => {
+    return ICON_MAP[iconName] || ICON_MAP['Heart'];
   };
 
   const expenses = bills.map(bill => {
-    const { icon, color } = getIconForBill(bill.title);
+    const { icon, color } = getIconForBill(bill.icon || 'Heart');
     return {
       icon,
       label: bill.title,
